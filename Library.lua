@@ -1,3 +1,4 @@
+--KOLT UI LIBRARY V1
 return (function()
     local Players = game:GetService("Players")
     local UserInputService = game:GetService("UserInputService")
@@ -12,34 +13,21 @@ return (function()
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "KOLT_UI"
 
-        local Tooltip = Instance.new("TextLabel", ScreenGui)
-        Tooltip.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        Tooltip.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Tooltip.Font = Enum.Font.Gotham
-        Tooltip.TextSize = 12
-        Tooltip.Visible = false
-        Tooltip.ZIndex = 10
-        Tooltip.TextWrapped = true
-        Tooltip.Size = UDim2.new(0, 200, 0, 0)
-        Tooltip.AutomaticSize = Enum.AutomaticSize.Y
-        local ttStroke = Instance.new("UIStroke", Tooltip)
-        ttStroke.Color = Color3.fromRGB(0, 102, 255)
-        ttStroke.Thickness = 1
-        ttStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-        local mainFrame = Instance.new("Frame", ScreenGui)
+        local mainFrame = Instance.new("Frame")
+        mainFrame.Name = "Window"
+        mainFrame.Parent = ScreenGui
         mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
         mainFrame.Size = UDim2.new(0, 500, 0, 300)
         mainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+        mainFrame.Active = true -- Important for input detection
 
         local mainStroke = Instance.new("UIStroke", mainFrame)
         mainStroke.Thickness = 2
         mainStroke.Color = Color3.fromRGB(0, 102, 255)
         mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-        -- Improved drag: only on title bar
-        local dragging, dragLock = false, false
-        local dragStart, startPos
+        -- Dragging logic
+        local dragging, dragStart, startPos, dragLock = false, Vector2.new(), UDim2.new(), false
 
         local function onInputBegan(input)
             if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not dragLock then
@@ -66,10 +54,10 @@ return (function()
         UserInputService.InputEnded:Connect(onInputEnded)
 
         local titleBar = Instance.new("Frame", mainFrame)
+        titleBar.Name = "TitleBar"
         titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
         titleBar.Size = UDim2.new(1, 0, 0, 40)
-
-        titleBar.InputBegan:Connect(onInputBegan)  -- Drag only here
+        titleBar.InputBegan:Connect(onInputBegan) -- Only the title bar is draggable
 
         local titleStroke = Instance.new("UIStroke", titleBar)
         titleStroke.Color = Color3.fromRGB(0, 102, 255)
@@ -77,7 +65,7 @@ return (function()
         titleStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
         local titleLabel = Instance.new("TextLabel", titleBar)
-        titleLabel.Size = UDim2.new(1, -10, 1, 0)
+        titleLabel.Size = UDim2.new(1, -20, 1, 0)
         titleLabel.Position = UDim2.new(0, 10, 0, 0)
         titleLabel.BackgroundTransparency = 1
         titleLabel.Font = Enum.Font.GothamBold
@@ -87,6 +75,7 @@ return (function()
         titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
         local tabHolder = Instance.new("Frame", mainFrame)
+        tabHolder.Name = "TabHolder"
         tabHolder.BackgroundTransparency = 1
         tabHolder.Size = UDim2.new(1, -20, 0, 30)
         tabHolder.Position = UDim2.new(0, 10, 0, 45)
@@ -94,8 +83,10 @@ return (function()
         local UIList = Instance.new("UIListLayout", tabHolder)
         UIList.FillDirection = Enum.FillDirection.Horizontal
         UIList.Padding = UDim.new(0, 6)
+        UIList.HorizontalAlignment = Enum.HorizontalAlignment.Left
 
         local tabContainer = Instance.new("Frame", mainFrame)
+        tabContainer.Name = "TabContainer"
         tabContainer.BackgroundTransparency = 1
         tabContainer.Size = UDim2.new(1, -20, 1, -85)
         tabContainer.Position = UDim2.new(0, 10, 0, 80)
@@ -106,6 +97,7 @@ return (function()
             local Tab = {}
 
             local tabBtn = Instance.new("TextButton", tabHolder)
+            tabBtn.Name = name .. "TabButton"
             tabBtn.Size = UDim2.new(0, 90, 1, 0)
             tabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
             tabBtn.Font = Enum.Font.Gotham
@@ -119,16 +111,19 @@ return (function()
             stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
             local page = Instance.new("Frame", tabContainer)
+            page.Name = name .. "Page"
             page.BackgroundTransparency = 1
             page.Size = UDim2.new(1, 0, 1, 0)
             page.Visible = false
 
+            -- Left Column
             local leftColumn = Instance.new("ScrollingFrame", page)
+            leftColumn.Name = "LeftColumn"
             leftColumn.BackgroundTransparency = 1
             leftColumn.Size = UDim2.new(0.48, 0, 1, 0)
             leftColumn.CanvasSize = UDim2.new(0, 0, 0, 0)
             leftColumn.ScrollBarThickness = 0
-            leftColumn.AutomaticCanvasSize = Enum.AutomaticSize.Y  -- Improved auto sizing
+            leftColumn.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
             local leftList = Instance.new("UIListLayout", leftColumn)
             leftList.Padding = UDim.new(0, 5)
@@ -139,10 +134,27 @@ return (function()
             leftPad.PaddingLeft = UDim.new(0, 5)
             leftPad.PaddingRight = UDim.new(0, 5)
             leftPad.PaddingBottom = UDim.new(0, 5)
-
-            local rightColumn = leftColumn:Clone()
+            
+            -- Right Column
+            local rightColumn = Instance.new("ScrollingFrame", page)
+            rightColumn.Name = "RightColumn"
+            rightColumn.BackgroundTransparency = 1
+            rightColumn.Size = UDim2.new(0.48, 0, 1, 0)
             rightColumn.Position = UDim2.new(0.52, 0, 0, 0)
-            rightColumn.Parent = page
+            rightColumn.CanvasSize = UDim2.new(0, 0, 0, 0)
+            rightColumn.ScrollBarThickness = 0
+            rightColumn.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+            local rightList = Instance.new("UIListLayout", rightColumn)
+            rightList.Padding = UDim.new(0, 5)
+            rightList.SortOrder = Enum.SortOrder.LayoutOrder
+
+            local rightPad = Instance.new("UIPadding", rightColumn)
+            rightPad.PaddingTop = UDim.new(0, 5)
+            rightPad.PaddingLeft = UDim.new(0, 5)
+            rightPad.PaddingRight = UDim.new(0, 5)
+            rightPad.PaddingBottom = UDim.new(0, 5)
+
 
             tabs[tabBtn] = page
 
@@ -150,22 +162,31 @@ return (function()
                 for tBtn, p in pairs(tabs) do
                     p.Visible = false
                     tBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                    local btnStroke = tBtn:FindFirstChildOfClass("UIStroke")
+                    if btnStroke then
+                        btnStroke.Color = Color3.fromRGB(0, 102, 255)
+                    end
                 end
                 page.Visible = true
                 tabBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
+                local btnStroke = tabBtn:FindFirstChildOfClass("UIStroke")
+                if btnStroke then
+                    btnStroke.Color = Color3.fromRGB(0, 102, 255)
+                end
             end)
 
-            if next(tabs) == tabBtn then  -- Select first tab
+            if next(tabs) == tabBtn then
                 page.Visible = true
                 tabBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
             end
-
-            function Tab:AddLeftGroupbox(title)
+            
+            -- Helper function to create a groupbox
+            local function createGroupbox(parent, title)
                 local Section = {}
-
-                local groupbox = Instance.new("Frame", leftColumn)
+                
+                local groupbox = Instance.new("Frame", parent)
                 groupbox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-                groupbox.Size = UDim2.new(1, 0, 0, 0)  -- Auto size
+                groupbox.Size = UDim2.new(1, 0, 0, 0)
                 groupbox.AutomaticSize = Enum.AutomaticSize.Y
 
                 local gbStroke = Instance.new("UIStroke", groupbox)
@@ -199,138 +220,112 @@ return (function()
                 contentPad.PaddingTop = UDim.new(0, 5)
                 contentPad.PaddingBottom = UDim.new(0, 5)
 
-                -- Improved: auto update sizes on content change
-                contentList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    leftColumn.CanvasSize = UDim2.new(0, 0, 0, leftList.AbsoluteContentSize.Y + 10)
-                end)
-
-                function Section:AddButton(opt)
-                    local text = opt.Text or "Button"
-                    local func = opt.Func or function() end
-                    local doubleClick = opt.DoubleClick or false
+                -- Button
+                function Section:AddButton(options)
+                    local text = options.Text or "Button"
+                    local func = options.Func or function() end
+                    local doubleClick = options.DoubleClick or false
 
                     local elemFrame = Instance.new("Frame", contentFrame)
                     elemFrame.BackgroundTransparency = 1
                     elemFrame.Size = UDim2.new(1, 0, 0, 30)
+                    elemFrame.AutomaticSize = Enum.AutomaticSize.Y
 
-                    local button = Instance.new("TextButton", elemFrame)
-                    button.Size = UDim2.new(1, 0, 1, 0)
-                    button.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                    button.Text = text
-                    button.Font = Enum.Font.Gotham
-                    button.TextSize = 14
-                    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    local btn = Instance.new("TextButton", elemFrame)
+                    btn.Size = UDim2.new(1, 0, 0, 25)
+                    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                    btn.Text = text
+                    btn.Font = Enum.Font.Gotham
+                    btn.TextSize = 14
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-                    local btnStroke = Instance.new("UIStroke", button)
+                    local btnStroke = Instance.new("UIStroke", btn)
                     btnStroke.Thickness = 1
                     btnStroke.Color = Color3.fromRGB(0, 102, 255)
                     btnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-                    button.MouseEnter:Connect(function() button.BackgroundColor3 = Color3.fromRGB(35, 35, 45) end)
-                    button.MouseLeave:Connect(function() button.BackgroundColor3 = Color3.fromRGB(25, 25, 35) end)
-
                     local lastClick = 0
-                    button.MouseButton1Click:Connect(function()
+                    btn.MouseButton1Click:Connect(function()
                         if doubleClick then
-                            if tick() - lastClick < 0.5 then
+                            if tick() - lastClick <= 0.3 then
                                 func()
-                                lastClick = 0
-                            else
-                                lastClick = tick()
                             end
+                            lastClick = tick()
                         else
                             func()
                         end
                     end)
-
-                    local ButtonObj = {}
-
-                    function ButtonObj:AddButton(subOpt)
-                        local subText = subOpt.Text or "Sub"
-                        local subFunc = subOpt.Func or function() end
-
-                        button.Size = UDim2.new(0.6, 0, 1, 0)
-
-                        local subButton = Instance.new("TextButton", elemFrame)
-                        subButton.Size = UDim2.new(0.4, 0, 1, 0)
-                        subButton.Position = UDim2.new(0.6, 0, 0, 0)
-                        subButton.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                        subButton.Text = subText
-                        subButton.Font = Enum.Font.Gotham
-                        subButton.TextSize = 12
-                        subButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-                        local subStroke = Instance.new("UIStroke", subButton)
-                        subStroke.Thickness = 1
-                        subStroke.Color = Color3.fromRGB(0, 102, 255)
-                        subStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-                        subButton.MouseEnter:Connect(function() subButton.BackgroundColor3 = Color3.fromRGB(35, 35, 45) end)
-                        subButton.MouseLeave:Connect(function() subButton.BackgroundColor3 = Color3.fromRGB(25, 25, 35) end)
-                        subButton.MouseButton1Click:Connect(subFunc)
+                    
+                    local addedButtons = {}
+                    
+                    function Section:AddSubButton(options)
+                        local subBtn = Instance.new("TextButton", elemFrame)
+                        subBtn.Size = UDim2.new(1, -20, 0, 25)
+                        subBtn.Position = UDim2.new(0, 20, 0, 30 + (#addedButtons * 30))
+                        subBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+                        subBtn.Text = options.Text or "Sub Button"
+                        subBtn.Font = Enum.Font.Gotham
+                        subBtn.TextSize = 12
+                        subBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        
+                        local subBtnStroke = Instance.new("UIStroke", subBtn)
+                        subBtnStroke.Thickness = 1
+                        subBtnStroke.Color = Color3.fromRGB(0, 102, 255)
+                        subBtnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                        
+                        subBtn.MouseButton1Click:Connect(options.Func)
+                        
+                        table.insert(addedButtons, subBtn)
+                        elemFrame.Size = UDim2.new(1, 0, 0, 30 + (#addedButtons * 30))
                     end
-
-                    return ButtonObj
+                    
+                    return Section
                 end
 
+                -- Checkbox and Toggle (combined and simplified)
                 function Section:AddToggle(key, opt)
                     local text = opt.Text or "Toggle"
                     local default = opt.Default or false
-                    local tooltip = opt.Tooltip or nil
-                    local callback = opt.Callback or function(v) end
+                    local callback = opt.Callback or function() end
 
                     local elemFrame = Instance.new("Frame", contentFrame)
                     elemFrame.BackgroundTransparency = 1
                     elemFrame.Size = UDim2.new(1, 0, 0, 20)
 
-                    local togLabel = Instance.new("TextLabel", elemFrame)
-                    togLabel.Size = UDim2.new(1, -50, 1, 0)
-                    togLabel.BackgroundTransparency = 1
-                    togLabel.Font = Enum.Font.Gotham
-                    togLabel.TextSize = 14
-                    togLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    togLabel.Text = text
-                    togLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    local label = Instance.new("TextLabel", elemFrame)
+                    label.Size = UDim2.new(1, -30, 1, 0)
+                    label.BackgroundTransparency = 1
+                    label.Font = Enum.Font.Gotham
+                    label.TextSize = 14
+                    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    label.Text = text
+                    label.TextXAlignment = Enum.TextXAlignment.Left
 
-                    local togBtn = Instance.new("TextButton", elemFrame)
-                    togBtn.Size = UDim2.new(0, 40, 0, 20)
-                    togBtn.Position = UDim2.new(1, -40, 0, 0)
-                    togBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                    togBtn.Text = ""
+                    local toggleBtn = Instance.new("TextButton", elemFrame)
+                    toggleBtn.Size = UDim2.new(0, 30, 0, 18)
+                    toggleBtn.Position = UDim2.new(1, -30, 0, 1)
+                    toggleBtn.BackgroundColor3 = default and Color3.fromRGB(0, 102, 255) or Color3.fromRGB(25, 25, 35)
+                    toggleBtn.Text = ""
 
-                    local togStroke = Instance.new("UIStroke", togBtn)
-                    togStroke.Thickness = 1
-                    togStroke.Color = Color3.fromRGB(0, 102, 255)
-                    togStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-                    local knob = Instance.new("Frame", togBtn)
-                    knob.Size = UDim2.new(0, 20, 0, 18)
-                    knob.Position = UDim2.new(0, 0, 0, 1)
-                    knob.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                    local toggleStroke = Instance.new("UIStroke", toggleBtn)
+                    toggleStroke.Thickness = 1
+                    toggleStroke.Color = Color3.fromRGB(0, 102, 255)
+                    toggleStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                    
+                    local dot = Instance.new("Frame", toggleBtn)
+                    dot.Size = UDim2.new(0, 12, 0, 12)
+                    dot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    dot.Position = default and UDim2.new(1, -15, 0.5, -6) or UDim2.new(0, 3, 0.5, -6)
 
                     local state = default
-                    local function updateToggle()
-                        knob.Position = state and UDim2.new(0, 20, 0, 1) or UDim2.new(0, 0, 0, 1)
-                        knob.BackgroundColor3 = state and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
-                    end
-                    updateToggle()
-
-                    togBtn.MouseButton1Click:Connect(function()
+                    toggleBtn.MouseButton1Click:Connect(function()
                         state = not state
-                        updateToggle()
+                        toggleBtn.BackgroundColor3 = state and Color3.fromRGB(0, 102, 255) or Color3.fromRGB(25, 25, 35)
+                        dot:TweenPosition(UDim2.new(state and 1 or 0, state and -15 or 3, 0.5, -6), "Out", "Quad", 0.2)
                         callback(state)
                     end)
-
-                    if tooltip then
-                        elemFrame.MouseEnter:Connect(function()
-                            Tooltip.Text = tooltip
-                            Tooltip.Position = UDim2.new(0, elemFrame.AbsolutePosition.X + elemFrame.AbsoluteSize.X + 5, 0, elemFrame.AbsolutePosition.Y)
-                            Tooltip.Visible = true
-                        end)
-                        elemFrame.MouseLeave:Connect(function() Tooltip.Visible = false end)
-                    end
                 end
-
+                
                 function Section:AddCheckbox(key, opt)
                     local text = opt.Text or "Checkbox"
                     local default = opt.Default or false
@@ -375,7 +370,8 @@ return (function()
                         callback(state)
                     end)
                 end
-
+                
+                -- Slider
                 function Section:AddSlider(key, opt)
                     local text = opt.Text or "Slider"
                     local default = opt.Default or 0
@@ -383,308 +379,206 @@ return (function()
                     local max = opt.Max or 100
                     local rounding = opt.Rounding or 0
                     local compact = opt.Compact or false
-                    local callback = opt.Callback or function(v) end
+                    local callback = opt.Callback or function() end
 
                     local elemFrame = Instance.new("Frame", contentFrame)
                     elemFrame.BackgroundTransparency = 1
-                    elemFrame.Size = UDim2.new(1, 0, 0, compact and 20 or 40)
-
-                    local sliderLabel = Instance.new("TextLabel", elemFrame)
-                    sliderLabel.Size = UDim2.new(0.7, 0, 0, 20)
-                    sliderLabel.BackgroundTransparency = 1
-                    sliderLabel.Font = Enum.Font.Gotham
-                    sliderLabel.TextSize = 14
-                    sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    sliderLabel.Text = text
-                    sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-                    sliderLabel.Visible = not compact
-
-                    local valueLabel = Instance.new("TextLabel", elemFrame)
-                    valueLabel.Size = UDim2.new(0.3, 0, 0, 20)
-                    valueLabel.Position = UDim2.new(0.7, 0, 0, 0)
-                    valueLabel.BackgroundTransparency = 1
-                    valueLabel.Font = Enum.Font.Gotham
-                    valueLabel.TextSize = 14
-                    valueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    valueLabel.Text = tostring(default)
-                    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
-                    valueLabel.Visible = not compact
-
-                    local sliderBar = Instance.new("Frame", elemFrame)
-                    sliderBar.Size = UDim2.new(1, 0, 0, 10)
-                    sliderBar.Position = UDim2.new(0, 0, 0, compact and 5 or 25)
-                    sliderBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-
-                    local barStroke = Instance.new("UIStroke", sliderBar)
-                    barStroke.Thickness = 1
-                    barStroke.Color = Color3.fromRGB(0, 102, 255)
-                    barStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-                    local fill = Instance.new("Frame", sliderBar)
-                    fill.Size = UDim2.new(0, 0, 1, 0)
+                    elemFrame.Size = UDim2.new(1, 0, 0, compact and 30 or 50)
+                    
+                    local titleLabel = Instance.new("TextLabel", elemFrame)
+                    titleLabel.Size = UDim2.new(1, 0, 0, 15)
+                    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+                    titleLabel.BackgroundTransparency = 1
+                    titleLabel.Font = Enum.Font.Gotham
+                    titleLabel.TextSize = 14
+                    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    titleLabel.Text = text .. ": " .. string.format("%." .. tostring(rounding) .. "f", default)
+                    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    
+                    local sliderFrame = Instance.new("Frame", elemFrame)
+                    sliderFrame.Size = UDim2.new(1, 0, 0, 10)
+                    sliderFrame.Position = UDim2.new(0, 0, 0, compact and 15 or 30)
+                    sliderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                    
+                    local sliderStroke = Instance.new("UIStroke", sliderFrame)
+                    sliderStroke.Thickness = 1
+                    sliderStroke.Color = Color3.fromRGB(0, 102, 255)
+                    sliderStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                    
+                    local fill = Instance.new("Frame", sliderFrame)
                     fill.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
-
-                    local value = default
-                    local function updateValue(newVal)
-                        newVal = math.clamp(newVal, min, max)
-                        if rounding > 0 then
-                            newVal = math.round(newVal * 10^rounding) / 10^rounding
-                        else
-                            newVal = math.floor(newVal)
-                        end
-                        value = newVal
-                        local frac = (value - min) / (max - min)
-                        fill.Size = UDim2.new(frac, 0, 1, 0)
-                        valueLabel.Text = tostring(value)
+                    fill.Size = UDim2.new(0, 0, 1, 0)
+                    
+                    local value
+                    local draggingSlider = false
+                    
+                    local function updateSlider(input)
+                        local x = math.clamp(input.Position.X - sliderFrame.AbsolutePosition.X, 0, sliderFrame.AbsoluteSize.X)
+                        local ratio = x / sliderFrame.AbsoluteSize.X
+                        value = min + ratio * (max - min)
+                        
+                        fill.Size = UDim2.new(ratio, 0, 1, 0)
+                        titleLabel.Text = text .. ": " .. string.format("%." .. tostring(rounding) .. "f", value)
                         callback(value)
                     end
-                    updateValue(default)
-
-                    local dragging = false
-                    sliderBar.InputBegan:Connect(function(input)
+                    
+                    sliderFrame.InputBegan:Connect(function(input)
                         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                            dragging = true
-                            local relX = (input.Position.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
-                            updateValue(min + relX * (max - min))
+                            draggingSlider = true
+                            updateSlider(input)
                         end
                     end)
+                    
                     UserInputService.InputChanged:Connect(function(input)
-                        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                            local relX = math.clamp((input.Position.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X, 0, 1)
-                            updateValue(min + relX * (max - min))
+                        if draggingSlider and input.UserInputType == Enum.UserInputType.MouseMovement then
+                            updateSlider(input)
                         end
                     end)
+                    
                     UserInputService.InputEnded:Connect(function(input)
                         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                            dragging = false
+                            draggingSlider = false
                         end
                     end)
+                    
+                    -- Initial state
+                    local ratio = (default - min) / (max - min)
+                    fill.Size = UDim2.new(ratio, 0, 1, 0)
                 end
-
+                
+                -- Dropdown
                 function Section:AddDropdown(key, opt)
                     local values = opt.Values or {}
-                    local default = opt.Default or (opt.Multi and {} or 1)
-                    local multi = opt.Multi or false
                     local text = opt.Text or "Dropdown"
-                    local tooltip = opt.Tooltip or nil
-                    local callback = opt.Callback or function(v) end
-
+                    local multi = opt.Multi or false
+                    local default = opt.Default or (multi and {} or nil)
+                    local callback = opt.Callback or function() end
+                    
                     local elemFrame = Instance.new("Frame", contentFrame)
                     elemFrame.BackgroundTransparency = 1
                     elemFrame.Size = UDim2.new(1, 0, 0, 30)
-
-                    local dropButton = Instance.new("TextButton", elemFrame)
-                    dropButton.Size = UDim2.new(1, 0, 1, 0)
-                    dropButton.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                    dropButton.Font = Enum.Font.Gotham
-                    dropButton.TextSize = 14
-                    dropButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    dropButton.TextXAlignment = Enum.TextXAlignment.Left
-
-                    local dropStroke = Instance.new("UIStroke", dropButton)
-                    dropStroke.Thickness = 1
-                    dropStroke.Color = Color3.fromRGB(0, 102, 255)
-                    dropStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-                    local arrow = Instance.new("TextLabel", dropButton)
-                    arrow.Size = UDim2.new(0, 20, 1, 0)
-                    arrow.Position = UDim2.new(1, -20, 0, 0)
-                    arrow.BackgroundTransparency = 1
-                    arrow.Text = "▼"
-                    arrow.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    arrow.Font = Enum.Font.Gotham
-                    arrow.TextSize = 14
-
-                    local open = false
-                    local selected
-                    local selTable = {}
-
-                    if not multi then
-                        selected = values[default] or values[1]
-                        dropButton.Text = text .. ": " .. (selected or "None")
-                    else
-                        for _, v in ipairs(values) do
-                            selTable[v] = false
-                        end
-                        for _, d in ipairs(default) do
-                            selTable[d] = true
-                        end
-                        local selText = {}
-                        for k, s in pairs(selTable) do if s then table.insert(selText, k) end end
-                        dropButton.Text = text .. ": " .. (next(selText) and table.concat(selText, ", ") or "None")
-                    end
-
-                    local listFrame = Instance.new("ScrollingFrame", ScreenGui)
-                    listFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-                    listFrame.Size = UDim2.new(0, elemFrame.AbsoluteSize.X, 0, math.min(#values * 25, 150))
-                    listFrame.Visible = false
-                    listFrame.ZIndex = 5
-                    listFrame.ScrollBarThickness = 4
-
-                    local listList = Instance.new("UIListLayout", listFrame)
-                    listList.Padding = UDim.new(0, 0)
-
-                    local listPad = Instance.new("UIPadding", listFrame)
-                    listPad.PaddingTop = UDim.new(0, 5)
-                    listPad.PaddingLeft = UDim.new(0, 5)
-
-                    local function updateList()
-                        listFrame.Position = UDim2.new(0, elemFrame.AbsolutePosition.X, 0, elemFrame.AbsolutePosition.Y + 30)
-                        listFrame.CanvasSize = UDim2.new(0, 0, 0, listList.AbsoluteContentSize.Y + 10)
-                    end
-
-                    local function refreshText()
-                        if not multi then
-                            dropButton.Text = text .. ": " .. (selected or "None")
-                            callback(selected)
-                        else
-                            local selText = {}
-                            for k, s in pairs(selTable) do if s then table.insert(selText, k) end end
-                            dropButton.Text = text .. ": " .. (next(selText) and table.concat(selText, ", ") or "None")
-                            callback(selTable)
-                        end
-                    end
-
-                    for i, val in ipairs(values) do
-                        local item = Instance.new("TextButton", listFrame)
-                        item.Size = UDim2.new(1, 0, 0, 25)
-                        item.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                        item.Text = val
-                        item.Font = Enum.Font.Gotham
-                        item.TextSize = 14
-                        item.TextColor3 = Color3.fromRGB(255, 255, 255)
-                        item.TextXAlignment = Enum.TextXAlignment.Left
-
-                        local itemStroke = Instance.new("UIStroke", item)
-                        itemStroke.Thickness = 1
-                        itemStroke.Color = Color3.fromRGB(0, 102, 255)
-                        itemStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-                        item.MouseEnter:Connect(function() item.BackgroundColor3 = Color3.fromRGB(35, 35, 45) end)
-                        item.MouseLeave:Connect(function() item.BackgroundColor3 = Color3.fromRGB(25, 25, 35) end)
-
-                        if not multi then
-                            if val == selected then item.TextColor3 = Color3.fromRGB(0, 255, 0) end
-                        else
-                            if selTable[val] then item.TextColor3 = Color3.fromRGB(0, 255, 0) end
-                        end
-
-                        item.MouseButton1Click:Connect(function()
-                            if multi then
-                                selTable[val] = not selTable[val]
-                                item.TextColor3 = selTable[val] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
-                                refreshText()
-                            else
-                                for _, child in ipairs(listFrame:GetChildren()) do
-                                    if child:IsA("TextButton") then child.TextColor3 = Color3.fromRGB(255, 255, 255) end
-                                end
-                                item.TextColor3 = Color3.fromRGB(0, 255, 0)
-                                selected = val
-                                refreshText()
-                                open = false
-                                listFrame.Visible = false
+                    
+                    local dropdownBtn = Instance.new("TextButton", elemFrame)
+                    dropdownBtn.Size = UDim2.new(1, 0, 1, 0)
+                    dropdownBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                    dropdownBtn.Text = text
+                    dropdownBtn.Font = Enum.Font.Gotham
+                    dropdownBtn.TextSize = 14
+                    dropdownBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    
+                    local dropdownStroke = Instance.new("UIStroke", dropdownBtn)
+                    dropdownStroke.Thickness = 1
+                    dropdownStroke.Color = Color3.fromRGB(0, 102, 255)
+                    dropdownStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                    
+                    local menuFrame = Instance.new("Frame", elemFrame)
+                    menuFrame.Name = "Menu"
+                    menuFrame.Visible = false
+                    menuFrame.BackgroundTransparency = 1
+                    menuFrame.Size = UDim2.new(1, 0, 0, #values * 25)
+                    menuFrame.Position = UDim2.new(0, 0, 0, 30)
+                    
+                    local menuList = Instance.new("UIListLayout", menuFrame)
+                    menuList.Padding = UDim.new(0, 2)
+                    menuList.SortOrder = Enum.SortOrder.LayoutOrder
+                    
+                    local menuBG = Instance.new("Frame", menuFrame)
+                    menuBG.Size = UDim2.new(1, 0, 1, 0)
+                    menuBG.Position = UDim2.new(0, 0, 0, 0)
+                    menuBG.ZIndex = 1
+                    menuBG.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+                    menuBG.BorderSizePixel = 0
+                    
+                    local menuStroke = Instance.new("UIStroke", menuBG)
+                    menuStroke.Thickness = 1
+                    menuStroke.Color = Color3.fromRGB(0, 102, 255)
+                    menuStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                    
+                    menuBG.Parent = menuFrame
+                    
+                    local function updateDropdownText()
+                        if multi then
+                            local selectedCount = 0
+                            for _, selected in pairs(default) do
+                                if selected then selectedCount = selectedCount + 1 end
                             end
-                        end)
-                    end
-
-                    local function toggleOpen()
-                        open = not open
-                        listFrame.Visible = open
-                        if open then
-                            updateList()
-                            local overlay = Instance.new("TextButton", ScreenGui)
-                            overlay.Size = UDim2.new(1, 0, 1, 0)
-                            overlay.BackgroundTransparency = 1
-                            overlay.Text = ""
-                            overlay.ZIndex = 4
-                            overlay.MouseButton1Click:Connect(function()
-                                open = false
-                                listFrame.Visible = false
-                                overlay:Destroy()
-                            end)
+                            dropdownBtn.Text = text .. " (" .. selectedCount .. ")"
+                        else
+                            dropdownBtn.Text = text .. ": " .. (default or "None")
                         end
                     end
-
-                    dropButton.MouseButton1Click:Connect(toggleOpen)
-
-                    if tooltip then
-                        elemFrame.MouseEnter:Connect(function()
-                            Tooltip.Text = tooltip
-                            Tooltip.Position = UDim2.new(0, elemFrame.AbsolutePosition.X + elemFrame.AbsoluteSize.X + 5, 0, elemFrame.AbsolutePosition.Y)
-                            Tooltip.Visible = true
+                    
+                    local function createOptionButton(optionText)
+                        local optionBtn = Instance.new("TextButton", menuFrame)
+                        optionBtn.Size = UDim2.new(1, -4, 0, 20)
+                        optionBtn.Position = UDim2.new(0, 2, 0, 0)
+                        optionBtn.ZIndex = 2
+                        optionBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                        optionBtn.Text = optionText
+                        optionBtn.Font = Enum.Font.Gotham
+                        optionBtn.TextSize = 12
+                        optionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        
+                        local stroke = Instance.new("UIStroke", optionBtn)
+                        stroke.Thickness = 1
+                        stroke.Color = Color3.fromRGB(0, 102, 255)
+                        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                        
+                        optionBtn.MouseButton1Click:Connect(function()
+                            if multi then
+                                if default[optionText] then
+                                    default[optionText] = nil
+                                    optionBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                                else
+                                    default[optionText] = true
+                                    optionBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
+                                end
+                                callback(default)
+                            else
+                                default = optionText
+                                for _, child in pairs(menuFrame:GetChildren()) do
+                                    if child:IsA("TextButton") then
+                                        child.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+                                    end
+                                end
+                                optionBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
+                                menuFrame.Visible = false
+                                callback(default)
+                            end
+                            updateDropdownText()
                         end)
-                        elemFrame.MouseLeave:Connect(function() Tooltip.Visible = false end)
+                        
+                        return optionBtn
                     end
+                    
+                    for _, option in ipairs(values) do
+                        local optionBtn = createOptionButton(option)
+                        if multi and default[option] or (not multi and default == option) then
+                            optionBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
+                        end
+                    end
+                    
+                    dropdownBtn.MouseButton1Click:Connect(function()
+                        menuFrame.Visible = not menuFrame.Visible
+                    end)
+                    
+                    updateDropdownText()
                 end
 
                 return Section
             end
 
-            -- Add similar for right if needed
+            function Tab:AddLeftGroupbox(title)
+                return createGroupbox(leftColumn, title)
+            end
+
             function Tab:AddRightGroupbox(title)
-                local Section = {}
-
-                local groupbox = Instance.new("Frame", rightColumn)
-                groupbox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-                groupbox.Size = UDim2.new(1, 0, 0, 0)
-                groupbox.AutomaticSize = Enum.AutomaticSize.Y
-
-                local gbStroke = Instance.new("UIStroke", groupbox)
-                gbStroke.Color = Color3.fromRGB(0, 102, 255)
-                gbStroke.Thickness = 1
-                gbStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-                local gbTitle = Instance.new("TextLabel", groupbox)
-                gbTitle.Size = UDim2.new(1, -20, 0, 20)
-                gbTitle.Position = UDim2.new(0, 10, 0, 5)
-                gbTitle.BackgroundTransparency = 1
-                gbTitle.Font = Enum.Font.GothamSemibold
-                gbTitle.TextSize = 16
-                gbTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                gbTitle.Text = title
-                gbTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                local contentFrame = Instance.new("Frame", groupbox)
-                contentFrame.BackgroundTransparency = 1
-                contentFrame.Size = UDim2.new(1, 0, 1, -30)
-                contentFrame.Position = UDim2.new(0, 0, 0, 25)
-                contentFrame.AutomaticSize = Enum.AutomaticSize.Y
-
-                local contentList = Instance.new("UIListLayout", contentFrame)
-                contentList.Padding = UDim.new(0, 5)
-                contentList.SortOrder = Enum.SortOrder.LayoutOrder
-
-                local contentPad = Instance.new("UIPadding", contentFrame)
-                contentPad.PaddingLeft = UDim.new(0, 10)
-                contentPad.PaddingRight = UDim.new(0, 10)
-                contentPad.PaddingTop = UDim.new(0, 5)
-                contentPad.PaddingBottom = UDim.new(0, 5)
-
-                contentList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    rightColumn.CanvasSize = UDim2.new(0, 0, 0, contentList.AbsoluteContentSize.Y + 10)
-                end)
-
-                -- Duplicate the AddButton, AddToggle, AddCheckbox, AddSlider, AddDropdown functions here for the right section
-                -- (Omitted for brevity, but implement them identically, replacing the contentFrame reference)
-
-                function Section:AddButton(opt)
-                    -- Identical to left's AddButton, using this contentFrame
-                    local text = opt.Text or "Button"
-                    local func = opt.Func or function() end
-                    local doubleClick = opt.DoubleClick or false
-
-                    local elemFrame = Instance.new("Frame", contentFrame)
-                    -- ... rest same as above
-                end
-
-                -- Similarly for AddToggle, AddCheckbox, AddSlider, AddDropdown (copy the code blocks)
-
-                return Section
+                return createGroupbox(rightColumn, title)
             end
 
             return Tab
         end
-
+        
         -- External buttons (improved positioning and hover effects)
         local function createExternalButton(text, posY, callback)
             local btn = Instance.new("TextButton", ScreenGui)
@@ -713,6 +607,6 @@ return (function()
 
         return Window
     end
-
+    
     return Library
 end)()
