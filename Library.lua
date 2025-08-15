@@ -4,8 +4,6 @@ return (function()
     local player = Players.LocalPlayer
 
     local G2L = {}
-
-    -- ScreenGui
     G2L["ScreenGui_1"] = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
     G2L["ScreenGui_1"].ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     G2L["ScreenGui_1"].Name = "KOLT_UI"
@@ -25,30 +23,26 @@ return (function()
     local dragging, dragLock = false, false
     local dragStart, startPos
 
-    local function onInputBegan(input)
+    mainFrame.InputBegan:Connect(function(input)
         if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not dragLock then
             dragging = true
             dragStart = input.Position
             startPos = mainFrame.Position
         end
-    end
+    end)
 
-    local function onInputChanged(input)
+    UserInputService.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
             mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
-    end
+    end)
 
-    local function onInputEnded(input)
+    UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
         end
-    end
-
-    mainFrame.InputBegan:Connect(onInputBegan)
-    UserInputService.InputChanged:Connect(onInputChanged)
-    UserInputService.InputEnded:Connect(onInputEnded)
+    end)
 
     -- Barra de título
     local titleBar = Instance.new("Frame", mainFrame)
@@ -105,12 +99,12 @@ return (function()
         local leftSection = Instance.new("Frame", page)
         leftSection.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         leftSection.Size = UDim2.new(0.48, 0, 1, 0)
-        leftSection.Position = UDim2.new(0,0,0,0)
+        leftSection.Position = UDim2.new(0, 0, 0, 0)
 
         local rightSection = Instance.new("Frame", page)
         rightSection.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         rightSection.Size = UDim2.new(0.48, 0, 1, 0)
-        rightSection.Position = UDim2.new(0.52,0,0,0)
+        rightSection.Position = UDim2.new(0.52, 0, 0, 0)
 
         tabs[tabBtn] = page
         contents[name] = {Left = leftSection, Right = rightSection}
@@ -124,8 +118,57 @@ return (function()
             tabBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
         end)
 
-        return contents[name]
+        local tabFunctions = {}
+
+        -- Add Left Section Groupbox
+        function tabFunctions:AddLeftGroupbox(title)
+            local box = Instance.new("Frame", leftSection)
+            box.Size = UDim2.new(1, -10, 0, 150)
+            box.Position = UDim2.new(0, 5, 0, #leftSection:GetChildren() * 160)
+            box.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+
+            local boxTitle = Instance.new("TextLabel", box)
+            boxTitle.Size = UDim2.new(1, -10, 0, 20)
+            boxTitle.Position = UDim2.new(0, 5, 0, 5)
+            boxTitle.BackgroundTransparency = 1
+            boxTitle.Text = title
+            boxTitle.TextColor3 = Color3.fromRGB(255,255,255)
+            boxTitle.Font = Enum.Font.GothamBold
+            boxTitle.TextSize = 16
+            boxTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+            local featureFunctions = {}
+
+            function featureFunctions:AddCheckbox(text, options)
+                local cb = Instance.new("TextButton", box)
+                cb.Size = UDim2.new(1, -10, 0, 30)
+                cb.Position = UDim2.new(0, 5, 0, (#box:GetChildren()-1)*35)
+                cb.BackgroundColor3 = Color3.fromRGB(25,25,35)
+                cb.Text = text
+                cb.Font = Enum.Font.Gotham
+                cb.TextSize = 14
+                cb.TextColor3 = Color3.fromRGB(255,255,255)
+
+                local toggled = options.Default or false
+                cb.MouseButton1Click:Connect(function()
+                    toggled = not toggled
+                    if options.Callback then
+                        options.Callback(toggled)
+                    end
+                    cb.Text = text .. (toggled and " [ON]" or " [OFF]")
+                end)
+            end
+
+            return featureFunctions
+        end
+
+        return tabFunctions
     end
+
+    -- Criando Tab padrão
+    local tab1 = createTab("Main")
+    tabs[tabHolder:FindFirstChildOfClass("TextButton")].Visible = true
+    tabHolder:FindFirstChildOfClass("TextButton").BackgroundColor3 = Color3.fromRGB(0,102,255)
 
     -- Botões externos flat
     local function createButton(text, posY, callback)
@@ -150,13 +193,7 @@ return (function()
         return btn
     end
 
-    -- Criando tabs padrão
-    local tab1 = createTab("Main")
-    local tab2 = createTab("Settings")
-    tabs[tabHolder:FindFirstChildOfClass("TextButton")].Visible = true
-    tabHolder:FindFirstChildOfClass("TextButton").BackgroundColor3 = Color3.fromRGB(0,102,255)
-
-    -- Criando botões padrão
+    -- Botões padrão
     createButton("TOGGLE UI", 12, function() mainFrame.Visible = not mainFrame.Visible end)
     createButton("LOCK UI", 52, function() dragLock = not dragLock end)
 
