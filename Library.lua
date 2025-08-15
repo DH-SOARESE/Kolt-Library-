@@ -2,6 +2,7 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local CollectionService = game:GetService("CollectionService")
+local TextService = game:GetService("TextService")
 local player = Players.LocalPlayer
 
 -- Constants
@@ -48,6 +49,7 @@ btn.TextSize = 15
 btn.FontFace = FONT
 btn.Text = text
 btn.TextYAlignment = Enum.TextYAlignment.Center
+btn.TextXAlignment = Enum.TextXAlignment.Center
 btn.ZIndex = 999
 btn.Parent = parent
 addStroke(btn, ACCENT_COLOR)
@@ -184,6 +186,8 @@ titleLabel.Text = config.Title or "UI LIBRARY KOLT"
 local window = {}
 window.AddTab = function(self, name)
 local btn = createButton(tabsFrame, name, UDim2.new(0, 100, 1, 0), UDim2.new(0, 0, 0, 0))
+local textBounds = TextService:GetTextSize(name, btn.TextSize, Enum.Font.Gotham, Vector2.new(math.huge, math.huge))
+btn.Size = UDim2.new(0, textBounds.X + 20, 1, 0)
 btn.MouseButton1Click:Connect(function()
 TabsManager:SelectTab(name)
 end)
