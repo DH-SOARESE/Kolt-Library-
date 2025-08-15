@@ -1,76 +1,76 @@
--- 📦 KOLT UI Flat Library
--- Autor: DH_SOARES (Flat Design, sem bordas arredondadas)
--- Uso: local UI, Tabs = loadstring(game:HttpGet("link.lua"))()
+return (function()
+    local Players = game:GetService("Players")
+    local UserInputService = game:GetService("UserInputService")
+    local player = Players.LocalPlayer
 
-local Library = {}
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local player = Players.LocalPlayer
+    local G2L = {}
 
--- Cores padrão
-local Theme = {
-    Background = Color3.fromRGB(15, 15, 20),
-    Section = Color3.fromRGB(18, 18, 25),
-    Accent = Color3.fromRGB(0, 102, 255),
-    Text = Color3.fromRGB(255, 255, 255)
-}
+    -- ScreenGui
+    G2L["ScreenGui_1"] = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+    G2L["ScreenGui_1"].ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    G2L["ScreenGui_1"].Name = "KOLT_UI"
 
--- Criar UI principal
-function Library:CreateUI()
-    local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    ScreenGui.Name = "KOLT_UI"
-
-    local mainFrame = Instance.new("Frame", ScreenGui)
-    mainFrame.BackgroundColor3 = Theme.Background
-    mainFrame.Size = UDim2.new(0, 520, 0, 320)
-    mainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
+    -- Frame Principal
+    local mainFrame = Instance.new("Frame", G2L["ScreenGui_1"])
+    mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+    mainFrame.Size = UDim2.new(0, 500, 0, 300)
+    mainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
 
     local mainStroke = Instance.new("UIStroke", mainFrame)
     mainStroke.Thickness = 2
-    mainStroke.Color = Theme.Accent
+    mainStroke.Color = Color3.fromRGB(0, 102, 255)
     mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    -- Dragging
+    -- Arraste
     local dragging, dragLock = false, false
     local dragStart, startPos
 
-    mainFrame.InputBegan:Connect(function(input)
+    local function onInputBegan(input)
         if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not dragLock then
             dragging = true
             dragStart = input.Position
             startPos = mainFrame.Position
         end
-    end)
+    end
 
-    UserInputService.InputChanged:Connect(function(input)
+    local function onInputChanged(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
             mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
-    end)
+    end
 
-    UserInputService.InputEnded:Connect(function(input)
+    local function onInputEnded(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
         end
-    end)
+    end
+
+    mainFrame.InputBegan:Connect(onInputBegan)
+    UserInputService.InputChanged:Connect(onInputChanged)
+    UserInputService.InputEnded:Connect(onInputEnded)
 
     -- Barra de título
     local titleBar = Instance.new("Frame", mainFrame)
     titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
     titleBar.Size = UDim2.new(1, 0, 0, 40)
 
+    local titleStroke = Instance.new("UIStroke", titleBar)
+    titleStroke.Color = Color3.fromRGB(0, 102, 255)
+    titleStroke.Thickness = 1.5
+    titleStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
     local titleLabel = Instance.new("TextLabel", titleBar)
-    titleLabel.Size = UDim2.new(1, -12, 1, 0)
-    titleLabel.Position = UDim2.new(0, 6, 0, 0)
+    titleLabel.Size = UDim2.new(1, -10, 1, 0)
+    titleLabel.Position = UDim2.new(0, 10, 0, 0)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextSize = 18
+    titleLabel.TextSize = 20
     titleLabel.Text = "KOLT UI"
-    titleLabel.TextColor3 = Theme.Text
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
+    -- Tabs
     local tabHolder = Instance.new("Frame", mainFrame)
     tabHolder.BackgroundTransparency = 1
     tabHolder.Size = UDim2.new(1, -20, 0, 30)
@@ -78,171 +78,92 @@ function Library:CreateUI()
 
     local UIList = Instance.new("UIListLayout", tabHolder)
     UIList.FillDirection = Enum.FillDirection.Horizontal
-    UIList.Padding = UDim.new(0, 8)
+    UIList.Padding = UDim.new(0, 6)
 
-    local Tabs = {}
-    Library._tabs = {}
-    Library._mainFrame = mainFrame
-    Library._tabHolder = tabHolder
-    Library._contents = Tabs
-    return ScreenGui, Tabs
-end
+    local tabs, contents = {}, {}
 
--- Criar nova Tab
-function Library:AddTab(name)
-    local tabBtn = Instance.new("TextButton", self._tabHolder)
-    tabBtn.Size = UDim2.new(0, 100, 1, 0)
-    tabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    tabBtn.Font = Enum.Font.Gotham
-    tabBtn.TextSize = 14
-    tabBtn.TextColor3 = Theme.Text
-    tabBtn.Text = name
+    local function createTab(name)
+        local tabBtn = Instance.new("TextButton", tabHolder)
+        tabBtn.Size = UDim2.new(0, 90, 1, 0)
+        tabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        tabBtn.Font = Enum.Font.Gotham
+        tabBtn.TextSize = 14
+        tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabBtn.Text = name
 
-    local stroke = Instance.new("UIStroke", tabBtn)
-    stroke.Thickness = 1.5
-    stroke.Color = Theme.Accent
-    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        local stroke = Instance.new("UIStroke", tabBtn)
+        stroke.Thickness = 1.5
+        stroke.Color = Color3.fromRGB(0, 102, 255)
+        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    local page = Instance.new("Frame", self._mainFrame)
-    page.BackgroundTransparency = 1
-    page.Size = UDim2.new(1, -20, 1, -85)
-    page.Position = UDim2.new(0, 10, 0, 80)
-    page.Visible = false
+        local page = Instance.new("Frame", mainFrame)
+        page.BackgroundTransparency = 1
+        page.Size = UDim2.new(1, -20, 1, -85)
+        page.Position = UDim2.new(0, 10, 0, 80)
+        page.Visible = false
 
-    local leftSection = Instance.new("Frame", page)
-    leftSection.BackgroundColor3 = Theme.Section
-    leftSection.Size = UDim2.new(0.48, 0, 1, 0)
+        local leftSection = Instance.new("Frame", page)
+        leftSection.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        leftSection.Size = UDim2.new(0.48, 0, 1, 0)
+        leftSection.Position = UDim2.new(0,0,0,0)
 
-    local rightSection = Instance.new("Frame", page)
-    rightSection.BackgroundColor3 = Theme.Section
-    rightSection.Size = UDim2.new(0.48, 0, 1, 0)
-    rightSection.Position = UDim2.new(0.52, 0, 0, 0)
+        local rightSection = Instance.new("Frame", page)
+        rightSection.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        rightSection.Size = UDim2.new(0.48, 0, 1, 0)
+        rightSection.Position = UDim2.new(0.52,0,0,0)
 
-    local leftList = Instance.new("UIListLayout", leftSection)
-    leftList.Padding = UDim.new(0, 6)
-    leftList.FillDirection = Enum.FillDirection.Vertical
+        tabs[tabBtn] = page
+        contents[name] = {Left = leftSection, Right = rightSection}
 
-    local rightList = Instance.new("UIListLayout", rightSection)
-    rightList.Padding = UDim.new(0, 6)
-    rightList.FillDirection = Enum.FillDirection.Vertical
+        tabBtn.MouseButton1Click:Connect(function()
+            for tBtn, p in pairs(tabs) do
+                p.Visible = false
+                tBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+            end
+            page.Visible = true
+            tabBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 255)
+        end)
 
-    self._tabs[tabBtn] = page
-    self._contents[name] = {Left = leftSection, Right = rightSection}
+        return contents[name]
+    end
 
-    tabBtn.MouseButton1Click:Connect(function()
-        for _, p in pairs(self._tabs) do p.Visible = false end
-        page.Visible = true
-    end)
+    -- Botões externos flat
+    local function createButton(text, posY, callback)
+        local btn = Instance.new("TextButton", G2L["ScreenGui_1"])
+        btn.Size = UDim2.new(0, 120, 0, 36)
+        btn.Position = UDim2.new(0, 10, 0, posY)
+        btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        btn.Font = Enum.Font.Gotham
+        btn.TextSize = 14
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.Text = text
 
-    return self._contents[name]
-end
+        local btnStroke = Instance.new("UIStroke", btn)
+        btnStroke.Thickness = 2
+        btnStroke.Color = Color3.fromRGB(0, 102, 255)
+        btnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
--- Criar Checkbox
-function Library:AddCheckbox(parent, text, default, callback)
-    local chk = Instance.new("TextButton", parent)
-    chk.Size = UDim2.new(1, -10, 0, 28)
-    chk.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    chk.Text = ""
-    local stroke = Instance.new("UIStroke", chk)
-    stroke.Color = Theme.Accent
+        btn.MouseEnter:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(35,35,45) end)
+        btn.MouseLeave:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(25,25,35) end)
+        btn.MouseButton1Click:Connect(callback)
 
-    local label = Instance.new("TextLabel", chk)
-    label.BackgroundTransparency = 1
-    label.Size = UDim2.new(1, -10, 1, 0)
-    label.Position = UDim2.new(0, 10, 0, 0)
-    label.Font = Enum.Font.Gotham
-    label.TextSize = 14
-    label.TextColor3 = Theme.Text
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Text = text
+        return btn
+    end
 
-    local state = default or false
-    chk.MouseButton1Click:Connect(function()
-        state = not state
-        callback(state)
-    end)
-end
+    -- Criando tabs padrão
+    local tab1 = createTab("Main")
+    local tab2 = createTab("Settings")
+    tabs[tabHolder:FindFirstChildOfClass("TextButton")].Visible = true
+    tabHolder:FindFirstChildOfClass("TextButton").BackgroundColor3 = Color3.fromRGB(0,102,255)
 
--- Criar Slider
-function Library:AddSlider(parent, text, min, max, default, callback)
-    local sliderFrame = Instance.new("Frame", parent)
-    sliderFrame.Size = UDim2.new(1, -10, 0, 50)
-    sliderFrame.BackgroundColor3 = Theme.Section
+    -- Criando botões padrão
+    createButton("TOGGLE UI", 12, function() mainFrame.Visible = not mainFrame.Visible end)
+    createButton("LOCK UI", 52, function() dragLock = not dragLock end)
 
-    local label = Instance.new("TextLabel", sliderFrame)
-    label.BackgroundTransparency = 1
-    label.Size = UDim2.new(1, -10, 0, 20)
-    label.Position = UDim2.new(0, 10, 0, 0)
-    label.Font = Enum.Font.Gotham
-    label.TextSize = 14
-    label.TextColor3 = Theme.Text
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Text = text
-
-    local bar = Instance.new("Frame", sliderFrame)
-    bar.Size = UDim2.new(1, -20, 0, 6)
-    bar.Position = UDim2.new(0, 10, 0, 28)
-    bar.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-
-    local fill = Instance.new("Frame", bar)
-    fill.Size = UDim2.new((default-min)/(max-min), 0, 1, 0)
-    fill.BackgroundColor3 = Theme.Accent
-
-    bar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local moveConn
-            moveConn = UserInputService.InputChanged:Connect(function(moveInput)
-                if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
-                    local pct = math.clamp((moveInput.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
-                    fill.Size = UDim2.new(pct, 0, 1, 0)
-                    callback(math.floor(min + pct * (max - min)))
-                end
-            end)
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    moveConn:Disconnect()
-                end
-            end)
-        end
-    end)
-end
-
--- Criar Botão
-function Library:AddButton(parent, text, callback)
-    local btn = Instance.new("TextButton", parent)
-    btn.Size = UDim2.new(1, -10, 0, 28)
-    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 14
-    btn.TextColor3 = Theme.Text
-    btn.Text = text
-    local stroke = Instance.new("UIStroke", btn)
-    stroke.Color = Theme.Accent
-    btn.MouseButton1Click:Connect(callback)
-end
-
--- Criar Dropdown (multi ou single)
-function Library:AddDropdown(parent, text, options, multi, callback)
-    local ddFrame = Instance.new("Frame", parent)
-    ddFrame.Size = UDim2.new(1, -10, 0, 28)
-    ddFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-
-    local label = Instance.new("TextLabel", ddFrame)
-    label.BackgroundTransparency = 1
-    label.Size = UDim2.new(1, -10, 1, 0)
-    label.Position = UDim2.new(0, 10, 0, 0)
-    label.Font = Enum.Font.Gotham
-    label.TextSize = 14
-    label.TextColor3 = Theme.Text
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Text = text
-
-    local selected = multi and {} or nil
-    ddFrame.MouseButton1Click:Connect(function()
-        for _, opt in ipairs(options) do
-            callback(opt)
-        end
-    end)
-end
-
-return Library
+    return {
+        ScreenGui = G2L["ScreenGui_1"],
+        CreateTab = createTab,
+        CreateButton = createButton,
+        Contents = contents
+    }
+end)()
