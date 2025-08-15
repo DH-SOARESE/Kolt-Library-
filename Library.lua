@@ -130,8 +130,8 @@ titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.FontFace = FONT
 titleLabel.TextSize = 18
 
--- Tabs container
-local tabs = createFrame(bgInner, UDim2.new(0, 434, 0, 32), UDim2.new(0, 4, 0, 4), "TABS", true)
+-- Tabs container menor
+local tabs = createFrame(bgInner, UDim2.new(0, 434, 0, 24), UDim2.new(0, 4, 0, 4), "TABS", true) -- altura reduzida de 32 para 24
 local tabsFrame = Instance.new("ScrollingFrame", tabs)
 tabsFrame.Size = UDim2.new(1, -6, 1, -4)
 tabsFrame.Position = UDim2.new(0, 2, 0, 2)
@@ -140,6 +140,7 @@ tabsFrame.BorderSizePixel = 0
 tabsFrame.ScrollBarThickness = 0
 tabsFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
 tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
+
 local tabsLayout = Instance.new("UIListLayout", tabsFrame)
 tabsLayout.FillDirection = Enum.FillDirection.Horizontal
 tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
