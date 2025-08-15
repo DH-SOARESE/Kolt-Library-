@@ -10,7 +10,7 @@ return (function()
 
         local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-        ScreenGui.Name = "KOLT_UI"
+        ScreenGui.Name = "No Title"
 
         local mainFrame = Instance.new("Frame", ScreenGui)
         mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
