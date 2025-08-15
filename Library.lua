@@ -47,6 +47,7 @@ btn.TextColor3 = TEXT_COLOR
 btn.TextSize = 15
 btn.FontFace = FONT
 btn.Text = text
+btn.TextYAlignment = Enum.TextYAlignment.Center
 btn.ZIndex = 999
 btn.Parent = parent
 addStroke(btn, ACCENT_COLOR)
@@ -130,21 +131,20 @@ titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.FontFace = FONT
 titleLabel.TextSize = 18
 
--- Tabs container menor
-local tabs = createFrame(bgInner, UDim2.new(0, 434, 0, 24), UDim2.new(0, 4, 0, 4), "TABS", true) -- altura reduzida de 32 para 24
+-- Tabs container
+local tabs = createFrame(bgInner, UDim2.new(0, 434, 0, 32), UDim2.new(0, 4, 0, 4), "TABS", false)
 local tabsFrame = Instance.new("ScrollingFrame", tabs)
-tabsFrame.Size = UDim2.new(1, -6, 1, -4)
-tabsFrame.Position = UDim2.new(0, 2, 0, 2)
+tabsFrame.Size = UDim2.new(1, 0, 1, 0)
+tabsFrame.Position = UDim2.new(0, 0, 0, 0)
 tabsFrame.BackgroundTransparency = 1
 tabsFrame.BorderSizePixel = 0
 tabsFrame.ScrollBarThickness = 0
 tabsFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
 tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
-
 local tabsLayout = Instance.new("UIListLayout", tabsFrame)
 tabsLayout.FillDirection = Enum.FillDirection.Horizontal
 tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
-tabsLayout.Padding = UDim.new(0, 2)
+tabsLayout.Padding = UDim.new(0, 4)
 
 -- Sections (Left / Right)
 local leftSection, leftScroll = createScrollingSection(mainUI, "Left", UDim2.new(0, 10, 0, 78), UDim2.new(0, 204, 0, 190))
@@ -222,6 +222,14 @@ end
 end
 })
 local groupobj = {}
+groupobj.AddButton = function(self, options)
+local text = options.Text or "Button"
+local callback = options.Callback or function() end
+table.insert(group.Elements, function(cont)
+local btn = createButton(cont, text, UDim2.new(1, 0, 0, 28), UDim2.new(0, 0, 0, 0))
+btn.MouseButton1Click:Connect(callback)
+end)
+end
 groupobj.AddCheckbox = function(self, key, options)
 table.insert(group.Elements, function(cont)
 local default = options.Default or false
@@ -257,6 +265,57 @@ checkmark.Text = checked and "✔" or ""
 KOLT_UI.Config[key] = checked
 callback(checked)
 end
+end)
+end)
+end
+groupobj.AddSlider = function(self, key, options)
+local min = options.Min or 0
+local max = options.Max or 100
+local default = options.Default or min
+local text = options.Text or "Slider"
+local callback = options.Callback or function(v) end
+local value = KOLT_UI.Config[key] ~= nil and KOLT_UI.Config[key] or default
+table.insert(group.Elements, function(cont)
+local frame = createFrame(cont, UDim2.new(1, 0, 0, 50), UDim2.new(0, 0, 0, 0))
+local label = Instance.new("TextLabel", frame)
+label.Text = text
+label.Size = UDim2.new(1, -50, 0, 20)
+label.Position = UDim2.new(0, 4, 0, 0)
+label.BackgroundTransparency = 1
+label.TextColor3 = TEXT_COLOR
+label.FontFace = FONT
+label.TextSize = 15
+label.TextXAlignment = Enum.TextXAlignment.Left
+local valLabel = Instance.new("TextLabel", frame)
+valLabel.Text = tostring(value)
+valLabel.Size = UDim2.new(0, 50, 0, 20)
+valLabel.Position = UDim2.new(1, -54, 0, 0)
+valLabel.BackgroundTransparency = 1
+valLabel.TextColor3 = TEXT_COLOR
+valLabel.FontFace = FONT
+valLabel.TextSize = 15
+valLabel.TextXAlignment = Enum.TextXAlignment.Right
+local sliderFrame = createFrame(frame, UDim2.new(1, -8, 0, 24), UDim2.new(0, 4, 0, 20))
+local bar = createFrame(sliderFrame, UDim2.new(1, 0, 0, 8), UDim2.new(0, 0, 0, 8))
+local knob = createFrame(bar, UDim2.new(0, 16, 0, 16), UDim2.new(0, 0, 0, -4))
+local dragging = false
+local relX = (value - min) / (max - min) * bar.AbsoluteSize.X
+knob.Position = UDim2.new(0, relX - 8, 0, -4)
+knob.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = true end
+end)
+knob.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local relX = math.clamp(input.Position.X - bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
+        knob.Position = UDim2.new(0, relX - 8, 0, -4)
+        value = math.floor(min + (relX / bar.AbsoluteSize.X) * (max - min))
+        valLabel.Text = tostring(value)
+        KOLT_UI.Config[key] = value
+        callback(value)
+    end
 end)
 end)
 end
@@ -293,6 +352,14 @@ end
 end
 })
 local groupobj = {}
+groupobj.AddButton = function(self, options)
+local text = options.Text or "Button"
+local callback = options.Callback or function() end
+table.insert(group.Elements, function(cont)
+local btn = createButton(cont, text, UDim2.new(1, 0, 0, 28), UDim2.new(0, 0, 0, 0))
+btn.MouseButton1Click:Connect(callback)
+end)
+end
 groupobj.AddCheckbox = function(self, key, options)
 table.insert(group.Elements, function(cont)
 local default = options.Default or false
@@ -328,6 +395,57 @@ checkmark.Text = checked and "✔" or ""
 KOLT_UI.Config[key] = checked
 callback(checked)
 end
+end)
+end)
+end
+groupobj.AddSlider = function(self, key, options)
+local min = options.Min or 0
+local max = options.Max or 100
+local default = options.Default or min
+local text = options.Text or "Slider"
+local callback = options.Callback or function(v) end
+local value = KOLT_UI.Config[key] ~= nil and KOLT_UI.Config[key] or default
+table.insert(group.Elements, function(cont)
+local frame = createFrame(cont, UDim2.new(1, 0, 0, 50), UDim2.new(0, 0, 0, 0))
+local label = Instance.new("TextLabel", frame)
+label.Text = text
+label.Size = UDim2.new(1, -50, 0, 20)
+label.Position = UDim2.new(0, 4, 0, 0)
+label.BackgroundTransparency = 1
+label.TextColor3 = TEXT_COLOR
+label.FontFace = FONT
+label.TextSize = 15
+label.TextXAlignment = Enum.TextXAlignment.Left
+local valLabel = Instance.new("TextLabel", frame)
+valLabel.Text = tostring(value)
+valLabel.Size = UDim2.new(0, 50, 0, 20)
+valLabel.Position = UDim2.new(1, -54, 0, 0)
+valLabel.BackgroundTransparency = 1
+valLabel.TextColor3 = TEXT_COLOR
+valLabel.FontFace = FONT
+valLabel.TextSize = 15
+valLabel.TextXAlignment = Enum.TextXAlignment.Right
+local sliderFrame = createFrame(frame, UDim2.new(1, -8, 0, 24), UDim2.new(0, 4, 0, 20))
+local bar = createFrame(sliderFrame, UDim2.new(1, 0, 0, 8), UDim2.new(0, 0, 0, 8))
+local knob = createFrame(bar, UDim2.new(0, 16, 0, 16), UDim2.new(0, 0, 0, -4))
+local dragging = false
+local relX = (value - min) / (max - min) * bar.AbsoluteSize.X
+knob.Position = UDim2.new(0, relX - 8, 0, -4)
+knob.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = true end
+end)
+knob.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local relX = math.clamp(input.Position.X - bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
+        knob.Position = UDim2.new(0, relX - 8, 0, -4)
+        value = math.floor(min + (relX / bar.AbsoluteSize.X) * (max - min))
+        valLabel.Text = tostring(value)
+        KOLT_UI.Config[key] = value
+        callback(value)
+    end
 end)
 end)
 end
