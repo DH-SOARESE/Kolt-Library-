@@ -50,18 +50,21 @@ local function createButton(parent, text, size, position)
     btn.ZIndex = 999
     btn.Parent = parent
     addStroke(btn, ACCENT_COLOR)
+    local corner = Instance.new("UICorner", btn)
+    corner.CornerRadius = UDim.new(0, 6)
     return btn
 end
 
 local function createScrollingSection(parent, name, position, size)
     local frame = createFrame(parent, size, position, name, true)
+    local corner = Instance.new("UICorner", frame)
+    corner.CornerRadius = UDim.new(0, 8)
     local scroll = Instance.new("ScrollingFrame", frame)
     scroll.Size = UDim2.new(1, -4, 1, -4)
     scroll.Position = UDim2.new(0, 2, 0, 2)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
-    scroll.ScrollBarThickness = 6
-    scroll.ScrollBarImageColor3 = ACCENT_COLOR
+    scroll.ScrollBarThickness = 0
     scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     return frame, scroll
 end
@@ -77,23 +80,55 @@ function KOLT_UI.CreateFeatureButton(parent, text, callback)
     return btn
 end
 
-function KOLT_UI.CreateSlider(parent, min, max, callback)
-    local frame = createFrame(parent, UDim2.new(1, 0, 0, 24), UDim2.new(0, 0, 0, 0))
-    local bar = createFrame(frame, UDim2.new(1, 0, 0, 8), UDim2.new(0, 0, 0, 8))
+function KOLT_UI.CreateSlider(parent, name, min, max, initial, callback)
+    local frame = createFrame(parent, UDim2.new(1, 0, 0, 40), UDim2.new(0, 0, 0, 0))
+    local label = Instance.new("TextLabel", frame)
+    label.Size = UDim2.new(1, -50, 0, 16)
+    label.Position = UDim2.new(0, 4, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = name
+    label.TextColor3 = TEXT_COLOR
+    label.FontFace = FONT
+    label.TextSize = 15
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    local valueLabel = Instance.new("TextLabel", frame)
+    valueLabel.Size = UDim2.new(0, 40, 0, 16)
+    valueLabel.Position = UDim2.new(1, -44, 0, 0)
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.TextColor3 = TEXT_COLOR
+    valueLabel.FontFace = FONT
+    valueLabel.TextSize = 15
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+    local bar = createFrame(frame, UDim2.new(1, -8, 0, 8), UDim2.new(0, 4, 0, 20))
+    local barCorner = Instance.new("UICorner", bar)
+    barCorner.CornerRadius = UDim.new(0, 4)
     local knob = createFrame(bar, UDim2.new(0, 16, 0, 16), UDim2.new(0, 0, 0, -4))
+    addStroke(knob, ACCENT_COLOR)
+    local knobCorner = Instance.new("UICorner", knob)
+    knobCorner.CornerRadius = UDim.new(0.5, 0)
     local dragging = false
-
+    local current = initial or min
+    valueLabel.Text = tostring(math.round(current))
+    local function updateKnob()
+        local frac = (current - min) / (max - min)
+        local relX = frac * bar.AbsoluteSize.X
+        knob.Position = UDim2.new(0, relX - 8, 0, -4)
+    end
+    bar:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateKnob)
+    updateKnob()
     knob.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = true end
     end)
     knob.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
     end)
     UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local relX = math.clamp(input.Position.X - bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
             knob.Position = UDim2.new(0, relX - 8, 0, -4)
             local value = min + (relX / bar.AbsoluteSize.X) * (max - min)
+            current = value
+            valueLabel.Text = tostring(math.round(value))
             if callback then callback(value) end
         end
     end)
@@ -138,6 +173,7 @@ tabsFrame.Position = UDim2.new(0, 2, 0, 2)
 tabsFrame.BackgroundTransparency = 1
 tabsFrame.BorderSizePixel = 0
 tabsFrame.ScrollBarThickness = 0
+tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
 tabsFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
 local tabsLayout = Instance.new("UIListLayout", tabsFrame)
 tabsLayout.FillDirection = Enum.FillDirection.Horizontal
@@ -195,6 +231,8 @@ function KOLT_UI:CreateWindow(config)
                 Func = function()
                     local scroll = leftScroll
                     local gframe = createFrame(scroll, UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 0, 0), "Groupbox", true)
+                    local corner = Instance.new("UICorner", gframe)
+                    corner.CornerRadius = UDim.new(0, 8)
                     local title = Instance.new("TextLabel", gframe)
                     title.Text = gname
                     title.Size = UDim2.new(1, 0, 0, 20)
@@ -220,6 +258,13 @@ function KOLT_UI:CreateWindow(config)
                 end
             })
             local groupobj = {}
+            groupobj.AddButton = function(self, options)
+                local text = options.Text or "Button"
+                local callback = options.Callback or function() end
+                table.insert(group.Elements, function(cont)
+                    KOLT_UI.CreateFeatureButton(cont, text, callback)
+                end)
+            end
             groupobj.AddCheckbox = function(self, key, options)
                 table.insert(group.Elements, function(cont)
                     local default = options.Default or false
@@ -238,13 +283,37 @@ function KOLT_UI:CreateWindow(config)
                     label.TextXAlignment = Enum.TextXAlignment.Left
                     local box = createFrame(frame, UDim2.new(0, 20, 0, 20), UDim2.new(1, -24, 0, 2), "Box", true)
                     box.BackgroundColor3 = checked and ACCENT_COLOR or MAIN_COLOR
+                    local checkmark = Instance.new("TextLabel", box)
+                    checkmark.Size = UDim2.new(1, 0, 1, 0)
+                    checkmark.BackgroundTransparency = 1
+                    checkmark.Text = checked and "✓" or ""
+                    checkmark.TextColor3 = TEXT_COLOR
+                    checkmark.FontFace = FONT
+                    checkmark.TextSize = 16
+                    checkmark.TextXAlignment = Enum.TextXAlignment.Center
+                    checkmark.TextYAlignment = Enum.TextYAlignment.Center
                     box.InputBegan:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                             checked = not checked
                             box.BackgroundColor3 = checked and ACCENT_COLOR or MAIN_COLOR
+                            checkmark.Text = checked and "✓" or ""
                             KOLT_UI.Config[key] = checked
                             callback(checked)
                         end
+                    end)
+                end)
+            end
+            groupobj.AddSlider = function(self, key, options)
+                local text = options.Text or "Slider"
+                local min = options.Min or 0
+                local max = options.Max or 100
+                local default = options.Default or min
+                local callback = options.Callback or function() end
+                table.insert(group.Elements, function(cont)
+                    local value = KOLT_UI.Config[key] ~= nil and KOLT_UI.Config[key] or default
+                    KOLT_UI.CreateSlider(cont, text, min, max, value, function(v)
+                        KOLT_UI.Config[key] = v
+                        callback(v)
                     end)
                 end)
             end
@@ -256,6 +325,8 @@ function KOLT_UI:CreateWindow(config)
                 Func = function()
                     local scroll = rightScroll
                     local gframe = createFrame(scroll, UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 0, 0), "Groupbox", true)
+                    local corner = Instance.new("UICorner", gframe)
+                    corner.CornerRadius = UDim.new(0, 8)
                     local title = Instance.new("TextLabel", gframe)
                     title.Text = gname
                     title.Size = UDim2.new(1, 0, 0, 20)
@@ -281,6 +352,13 @@ function KOLT_UI:CreateWindow(config)
                 end
             })
             local groupobj = {}
+            groupobj.AddButton = function(self, options)
+                local text = options.Text or "Button"
+                local callback = options.Callback or function() end
+                table.insert(group.Elements, function(cont)
+                    KOLT_UI.CreateFeatureButton(cont, text, callback)
+                end)
+            end
             groupobj.AddCheckbox = function(self, key, options)
                 table.insert(group.Elements, function(cont)
                     local default = options.Default or false
@@ -299,13 +377,37 @@ function KOLT_UI:CreateWindow(config)
                     label.TextXAlignment = Enum.TextXAlignment.Left
                     local box = createFrame(frame, UDim2.new(0, 20, 0, 20), UDim2.new(1, -24, 0, 2), "Box", true)
                     box.BackgroundColor3 = checked and ACCENT_COLOR or MAIN_COLOR
+                    local checkmark = Instance.new("TextLabel", box)
+                    checkmark.Size = UDim2.new(1, 0, 1, 0)
+                    checkmark.BackgroundTransparency = 1
+                    checkmark.Text = checked and "✓" or ""
+                    checkmark.TextColor3 = TEXT_COLOR
+                    checkmark.FontFace = FONT
+                    checkmark.TextSize = 16
+                    checkmark.TextXAlignment = Enum.TextXAlignment.Center
+                    checkmark.TextYAlignment = Enum.TextYAlignment.Center
                     box.InputBegan:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                             checked = not checked
                             box.BackgroundColor3 = checked and ACCENT_COLOR or MAIN_COLOR
+                            checkmark.Text = checked and "✓" or ""
                             KOLT_UI.Config[key] = checked
                             callback(checked)
                         end
+                    end)
+                end)
+            end
+            groupobj.AddSlider = function(self, key, options)
+                local text = options.Text or "Slider"
+                local min = options.Min or 0
+                local max = options.Max or 100
+                local default = options.Default or min
+                local callback = options.Callback or function() end
+                table.insert(group.Elements, function(cont)
+                    local value = KOLT_UI.Config[key] ~= nil and KOLT_UI.Config[key] or default
+                    KOLT_UI.CreateSlider(cont, text, min, max, value, function(v)
+                        KOLT_UI.Config[key] = v
+                        callback(v)
                     end)
                 end)
             end
