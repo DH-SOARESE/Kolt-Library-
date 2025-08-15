@@ -26,6 +26,14 @@ local function addStroke(inst, color, thickness)
     return stroke
 end
 
+local function removeCorners(inst)
+    for _, obj in ipairs(inst:GetDescendants()) do
+        if obj:IsA("UICorner") then
+            obj:Destroy()
+        end
+    end
+end
+
 local function createFrame(parent, size, position, name, withStroke)
     local frame = Instance.new("Frame")
     frame.Size = size
@@ -34,6 +42,7 @@ local function createFrame(parent, size, position, name, withStroke)
     frame.BackgroundColor3 = MAIN_COLOR
     frame.BorderSizePixel = 0
     frame.Parent = parent
+    removeCorners(frame)
     if withStroke then addStroke(frame, ACCENT_COLOR) end
     return frame
 end
@@ -51,20 +60,15 @@ local function createButton(parent, text, size, position)
     btn.ZIndex = 999
     btn.AutoButtonColor = false
     btn.Parent = parent
+    removeCorners(btn)
     addStroke(btn, ACCENT_COLOR)
 
     -- Hover / Touch Feedback
-    btn.MouseEnter:Connect(function()
-        btn.BackgroundColor3 = HOVER_COLOR
-    end)
-    btn.MouseLeave:Connect(function()
-        btn.BackgroundColor3 = MAIN_COLOR
-    end)
+    btn.MouseEnter:Connect(function() btn.BackgroundColor3 = HOVER_COLOR end)
+    btn.MouseLeave:Connect(function() btn.BackgroundColor3 = MAIN_COLOR end)
     btn.TouchTap:Connect(function()
         btn.BackgroundColor3 = HOVER_COLOR
-        task.delay(0.15, function()
-            btn.BackgroundColor3 = MAIN_COLOR
-        end)
+        task.delay(0.15, function() btn.BackgroundColor3 = MAIN_COLOR end)
     end)
     return btn
 end
@@ -95,16 +99,16 @@ function KOLT_UI.CreateFeatureButton(parent, text, callback)
 end
 
 function KOLT_UI.CreateSlider(parent, min, max, callback)
-    local frame = createFrame(parent, UDim2.new(1, 0, 0, 28), UDim2.new())
+    local frame = createFrame(parent, UDim2.new(1, 0, 0, 36), UDim2.new())
     frame.BackgroundTransparency = 1
 
-    local bar = createFrame(frame, UDim2.new(1, -10, 0, 8), UDim2.new(0, 5, 0, 10))
-    bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    local bar = createFrame(frame, UDim2.new(1, -10, 0, 14), UDim2.new(0, 5, 0, 11))
+    bar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 
     local fill = createFrame(bar, UDim2.new(0, 0, 1, 0), UDim2.new())
     fill.BackgroundColor3 = ACCENT_COLOR
 
-    local knob = createFrame(bar, UDim2.new(0, 16, 0, 16), UDim2.new(0, 0, 0, -4))
+    local knob = createFrame(bar, UDim2.new(0, 20, 0, 20), UDim2.new(0, 0, 0, -3))
     knob.BackgroundColor3 = ACCENT_COLOR
     knob.ZIndex = 10
 
@@ -112,27 +116,39 @@ function KOLT_UI.CreateSlider(parent, min, max, callback)
 
     local function updateSlider(inputX)
         local relX = math.clamp(inputX - bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
-        knob.Position = UDim2.new(0, relX - 8, 0, -4)
+        knob.Position = UDim2.new(0, relX - knob.AbsoluteSize.X / 2, 0, -3)
         fill.Size = UDim2.new(relX / bar.AbsoluteSize.X, 0, 1, 0)
         local value = min + (relX / bar.AbsoluteSize.X) * (max - min)
         if callback then callback(math.floor(value)) end
     end
 
+    local function startDrag(input)
+        dragging = true
+        updateSlider(input.Position.X)
+    end
+
+    local function stopDrag()
+        dragging = false
+    end
+
+    bar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            startDrag(input)
+        end
+    end)
     knob.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
+            startDrag(input)
         end
     end)
-
-    knob.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = false
-        end
-    end)
-
     UserInputService.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             updateSlider(input.Position.X)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            stopDrag()
         end
     end)
 
@@ -174,20 +190,36 @@ tabsFrame.Size = UDim2.new(1, -6, 1, -4)
 tabsFrame.Position = UDim2.new(0, 2, 0, 2)
 tabsFrame.BackgroundTransparency = 1
 tabsFrame.BorderSizePixel = 0
-tabsFrame.ScrollBarThickness = 0 -- Invisível
+tabsFrame.ScrollBarThickness = 0
 tabsFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
-tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X -- Apenas horizontal
+tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
 
 local tabsLayout = Instance.new("UIListLayout", tabsFrame)
 tabsLayout.FillDirection = Enum.FillDirection.Horizontal
 tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 tabsLayout.Padding = UDim.new(0, 2)
 
+-- Função para criar botões de tab
+function KOLT_UI.CreateTabButton(text)
+    local tabBtn = Instance.new("TextButton")
+    tabBtn.Size = UDim2.new(0, 100, 1, 0)
+    tabBtn.BackgroundColor3 = MAIN_COLOR
+    tabBtn.BorderSizePixel = 0
+    tabBtn.TextColor3 = TEXT_COLOR
+    tabBtn.FontFace = FONT
+    tabBtn.TextSize = 14
+    tabBtn.Text = text
+    tabBtn.TextTruncate = Enum.TextTruncate.AtEnd
+    tabBtn.AutoButtonColor = false
+    removeCorners(tabBtn)
+    addStroke(tabBtn, ACCENT_COLOR)
+    tabBtn.Parent = tabsFrame
+    return tabBtn
+end
+
 -- Sections
 local leftSection, leftScroll = createScrollingSection(mainUI, "Left", UDim2.new(0, 10, 0, 78), UDim2.new(0, 204, 0, 190))
 local rightSection, rightScroll = createScrollingSection(mainUI, "Right", UDim2.new(0, 220, 0, 78), UDim2.new(0, 224, 0, 190))
-
--- Layouts
 Instance.new("UIListLayout", leftScroll).Padding = UDim.new(0, 5)
 Instance.new("UIListLayout", rightScroll).Padding = UDim.new(0, 5)
 
