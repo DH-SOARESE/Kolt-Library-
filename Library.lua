@@ -18,15 +18,7 @@ KOLT_UI.Config = {}
 -- =========================================================
 -- Helpers
 -- =========================================================
-local function addStroke(inst, color, thickness)
-    local stroke = Instance.new("UIStroke", inst)
-    stroke.Color = color
-    stroke.Thickness = thickness or 2
-    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    return stroke
-end
-
-local function createFrame(parent, size, position, name, withStroke)
+local function createFrame(parent, size, position, name)
     local frame = Instance.new("Frame")
     frame.Size = size
     frame.Position = position
@@ -34,7 +26,6 @@ local function createFrame(parent, size, position, name, withStroke)
     frame.BackgroundColor3 = MAIN_COLOR
     frame.BorderSizePixel = 0
     frame.Parent = parent
-    if withStroke then addStroke(frame, ACCENT_COLOR) end
     return frame
 end
 
@@ -51,26 +42,25 @@ local function createButton(parent, text, size, position)
     btn.ZIndex = 999
     btn.AutoButtonColor = false
     btn.Parent = parent
-    addStroke(btn, ACCENT_COLOR)
 
-    -- Hover / Touch Feedback  
-    btn.MouseEnter:Connect(function()  
-        btn.BackgroundColor3 = HOVER_COLOR  
-    end)  
-    btn.MouseLeave:Connect(function()  
-        btn.BackgroundColor3 = MAIN_COLOR  
-    end)  
-    btn.TouchTap:Connect(function()  
-        btn.BackgroundColor3 = HOVER_COLOR  
-        task.delay(0.15, function()  
-            btn.BackgroundColor3 = MAIN_COLOR  
-        end)  
-    end)  
+    -- Hover / Touch Feedback
+    btn.MouseEnter:Connect(function()
+        btn.BackgroundColor3 = HOVER_COLOR
+    end)
+    btn.MouseLeave:Connect(function()
+        btn.BackgroundColor3 = MAIN_COLOR
+    end)
+    btn.TouchTap:Connect(function()
+        btn.BackgroundColor3 = HOVER_COLOR
+        task.delay(0.15, function()
+            btn.BackgroundColor3 = MAIN_COLOR
+        end)
+    end)
     return btn
 end
 
 local function createScrollingSection(parent, name, position, size)
-    local frame = createFrame(parent, size, position, name, true)
+    local frame = createFrame(parent, size, position, name)
     local scroll = Instance.new("ScrollingFrame", frame)
     scroll.Size = UDim2.new(1, -4, 1, -4)
     scroll.Position = UDim2.new(0, 2, 0, 2)
@@ -107,7 +97,7 @@ function KOLT_UI.CreateSlider(parent, min, max, callback)
     knob.BackgroundColor3 = ACCENT_COLOR
     knob.ZIndex = 10
 
-    local dragging = false  
+    local dragging = false
 
     local function updateSlider(inputX)
         local relX = math.clamp(inputX - bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
@@ -115,16 +105,16 @@ function KOLT_UI.CreateSlider(parent, min, max, callback)
         fill.Size = UDim2.new(relX / bar.AbsoluteSize.X, 0, 1, 0)
         local value = min + (relX / bar.AbsoluteSize.X) * (max - min)
         if callback then callback(math.floor(value)) end
-    end  
+    end
 
     local function startDrag(input)
         dragging = true
         updateSlider(input.Position.X)
-    end  
+    end
 
     local function stopDrag()
         dragging = false
-    end  
+    end
 
     bar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -167,10 +157,10 @@ uiFolder.Name = "UI_LS"
 local mainUI = createFrame(screenGui, UDim2.new(0, 454, 0, 278), UDim2.new(0.3, 0, 0.2, 0), "MAIN_UI")
 
 -- Inner BG
-local bgInner = createFrame(mainUI, UDim2.new(0, 442, 0, 234), UDim2.new(0, 6, 0, 40), "BACKGROUND_INNER", true)
+local bgInner = createFrame(mainUI, UDim2.new(0, 442, 0, 234), UDim2.new(0, 6, 0, 40), "BACKGROUND_INNER")
 
 -- Title
-local titleFrame = createFrame(mainUI, UDim2.new(0, 442, 0, 28), UDim2.new(0, 6, 0, 4), "TITLE", true)
+local titleFrame = createFrame(mainUI, UDim2.new(0, 442, 0, 28), UDim2.new(0, 6, 0, 4), "TITLE")
 local titleLabel = Instance.new("TextLabel", titleFrame)
 titleLabel.Size = UDim2.new(1, -4, 1, 0)
 titleLabel.Position = UDim2.new(0, 4, 0, 0)
