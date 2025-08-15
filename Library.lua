@@ -9,6 +9,7 @@ local MAIN_COLOR   = Color3.fromRGB(25, 25, 25)
 local ACCENT_COLOR = Color3.fromRGB(0, 102, 255)
 local TEXT_COLOR   = Color3.fromRGB(255, 255, 255)
 local HOVER_COLOR  = Color3.fromRGB(40, 40, 40)
+local PRESS_COLOR  = Color3.fromRGB(35, 35, 35)
 local FONT         = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 
 -- Library
@@ -53,13 +54,44 @@ local function createButton(parent, text, size, position)
     btn.Parent = parent
     addStroke(btn, ACCENT_COLOR)
 
-    -- Hover / Touch Feedback  
-    btn.MouseEnter:Connect(function() btn.BackgroundColor3 = HOVER_COLOR end)
-    btn.MouseLeave:Connect(function() btn.BackgroundColor3 = MAIN_COLOR end)
-    btn.TouchTap:Connect(function()
-        btn.BackgroundColor3 = HOVER_COLOR
-        task.delay(0.15, function() btn.BackgroundColor3 = MAIN_COLOR end)
+    -- Hover / Press Feedback
+    local isHovered = false
+    local isPressed = false
+
+    local function updateColor()
+        if isPressed then
+            btn.BackgroundColor3 = PRESS_COLOR
+        elseif isHovered then
+            btn.BackgroundColor3 = HOVER_COLOR
+        else
+            btn.BackgroundColor3 = MAIN_COLOR
+        end
+    end
+
+    btn.MouseEnter:Connect(function()
+        isHovered = true
+        updateColor()
     end)
+
+    btn.MouseLeave:Connect(function()
+        isHovered = false
+        updateColor()
+    end)
+
+    btn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isPressed = true
+            updateColor()
+        end
+    end)
+
+    btn.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isPressed = false
+            updateColor()
+        end
+    end)
+
     return btn
 end
 
@@ -73,6 +105,11 @@ local function createScrollingSection(parent, name, position, size)
     scroll.ScrollBarThickness = 0 -- Invisível
     scroll.ScrollingDirection = Enum.ScrollingDirection.Y
     scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+    local layout = Instance.new("UIListLayout", scroll)
+    layout.Padding = UDim.new(0, 5)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+
     return frame, scroll
 end
 
@@ -80,22 +117,21 @@ end
 -- Features
 -- =========================================================
 function KOLT_UI.CreateFeatureButton(parent, text, callback)
-    local btn = createButton(parent, text, UDim2.new(1, -6, 0, 28), UDim2.new(0, 3, 0, 3))
+    local btn = createButton(parent, text, UDim2.new(1, -6, 0, 30), UDim2.new(0, 3, 0, 3))
     if callback then
-        btn.MouseButton1Click:Connect(callback)
-        btn.TouchTap:Connect(callback)
+        btn.Activated:Connect(callback)
     end
     return btn
 end
 
 function KOLT_UI.CreateSlider(parent, min, max, callback)
-    local frame = createFrame(parent, UDim2.new(1, 0, 0, 28), UDim2.new())
+    local frame = createFrame(parent, UDim2.new(1, 0, 0, 28), UDim2.new(0, 0, 0, 0))
     frame.BackgroundTransparency = 1
 
     local bar = createFrame(frame, UDim2.new(1, -10, 0, 8), UDim2.new(0, 5, 0, 10))
     bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 
-    local fill = createFrame(bar, UDim2.new(0, 0, 1, 0), UDim2.new())
+    local fill = createFrame(bar, UDim2.new(0, 0, 1, 0), UDim2.new(0, 0, 0, 0))
     fill.BackgroundColor3 = ACCENT_COLOR
 
     local knob = createFrame(bar, UDim2.new(0, 16, 0, 16), UDim2.new(0, 0, 0, -4))
@@ -107,7 +143,7 @@ function KOLT_UI.CreateSlider(parent, min, max, callback)
     local function updateSlider(inputX)
         local relX = math.clamp(inputX - bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
         knob.Position = UDim2.new(0, relX - 8, 0, -4)
-        fill.Size = UDim2.new(relX / bar.AbsoluteSize.X, 0, 1, 0)
+        fill.Size = UDim2.new(0, relX, 1, 0)
         local value = min + (relX / bar.AbsoluteSize.X) * (max - min)
         if callback then callback(math.floor(value)) end
     end
@@ -162,7 +198,7 @@ titleLabel.FontFace = FONT
 titleLabel.TextSize = 18
 
 -- Tabs (Horizontal scroll)
-local tabs = createFrame(bgInner, UDim2.new(0, 434, 0, 28), UDim2.new(0, 4, 0, 4), "TABS", true) -- menor altura
+local tabs = createFrame(bgInner, UDim2.new(0, 434, 0, 28), UDim2.new(0, 4, 0, 4), "TABS", true)
 local tabsFrame = Instance.new("ScrollingFrame", tabs)
 tabsFrame.Size = UDim2.new(1, -6, 1, -4)
 tabsFrame.Position = UDim2.new(0, 2, 0, 2)
@@ -170,20 +206,46 @@ tabsFrame.BackgroundTransparency = 1
 tabsFrame.BorderSizePixel = 0
 tabsFrame.ScrollBarThickness = 0 -- Invisível
 tabsFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
-tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
+tabsFrame.ScrollingDirection = Enum.ScrollingDirection.X -- Apenas horizontal
 
 local tabsLayout = Instance.new("UIListLayout", tabsFrame)
 tabsLayout.FillDirection = Enum.FillDirection.Horizontal
 tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 tabsLayout.Padding = UDim.new(0, 2)
 
--- Sections
-local leftSection, leftScroll = createScrollingSection(mainUI, "Left", UDim2.new(0, 10, 0, 78), UDim2.new(0, 204, 0, 190))
-local rightSection, rightScroll = createScrollingSection(mainUI, "Right", UDim2.new(0, 220, 0, 78), UDim2.new(0, 224, 0, 190))
+local tabsList = {}
 
--- Layouts
-Instance.new("UIListLayout", leftScroll).Padding = UDim.new(0, 5)
-Instance.new("UIListLayout", rightScroll).Padding = UDim.new(0, 5)
+function KOLT_UI.CreateTab(name)
+    local btn = createButton(tabsFrame, name, UDim2.new(0, 80, 1, 0), UDim2.new(0, 0, 0, 0))
+
+    local tabFrame, tabScroll = createScrollingSection(bgInner, name .. "Section", UDim2.new(0, 4, 0, 36), UDim2.new(1, -8, 1, -40))
+    tabFrame.Visible = false
+
+    btn.Activated:Connect(function()
+        for _, tab in tabsList do
+            tab.btn.BackgroundColor3 = MAIN_COLOR
+            tab.frame.Visible = false
+        end
+        btn.BackgroundColor3 = HOVER_COLOR
+        tabFrame.Visible = true
+    end)
+
+    table.insert(tabsList, {btn = btn, frame = tabFrame})
+
+    if #tabsList == 1 then
+        tabFrame.Visible = true
+        btn.BackgroundColor3 = HOVER_COLOR
+    end
+
+    return {
+        AddButton = function(_, text, callback)
+            return KOLT_UI.CreateFeatureButton(tabScroll, text, callback)
+        end,
+        AddSlider = function(_, min, max, callback)
+            return KOLT_UI.CreateSlider(tabScroll, min, max, callback)
+        end
+    }
+end
 
 -- =========================================================
 -- Dragging (Mouse + Touch)
