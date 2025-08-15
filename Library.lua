@@ -1,14 +1,15 @@
--- 🎨 KOLT UI Library - Modular & Improved
+-- 🎨 KOLT UI Library - Modular & Improved (Mobile & Horizontal Tabs)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local CollectionService = game:GetService("CollectionService")
 local player = Players.LocalPlayer
 
 -- Constants
-local MAIN_COLOR = Color3.fromRGB(0, 0, 0)
-local ACCENT_COLOR = Color3.fromRGB(0, 0, 255)
+local MAIN_COLOR = Color3.fromRGB(30, 30, 30)
+local ACCENT_COLOR = Color3.fromRGB(0, 170, 255)
 local TEXT_COLOR = Color3.fromRGB(255, 255, 255)
 local FONT = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy)
+local ROUND_CORNER = UDim.new(0,6)
 
 -- Library Table
 local KOLT_UI = {}
@@ -33,7 +34,9 @@ local function createButton(parent, text, size, position)
     btn.FontFace = FONT
     btn.Text = text
     btn.ZIndex = 999
+    btn.AutoButtonColor = true
     btn.Parent = parent
+    btn.ClipsDescendants = true
     addStroke(btn, ACCENT_COLOR)
     return btn
 end
@@ -45,6 +48,8 @@ local function createFrame(parent, size, position, name, withStroke)
     frame.Name = name or ""
     frame.BackgroundColor3 = MAIN_COLOR
     frame.BorderSizePixel = 0
+    frame.ClipsDescendants = true
+    frame.AnchorPoint = Vector2.new(0,0)
     if withStroke then addStroke(frame, ACCENT_COLOR) end
     return frame
 end
@@ -56,9 +61,10 @@ local function createScrollingSection(parent, name, position, size)
     scroll.Position = UDim2.new(0, 2, 0, 2)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
-    scroll.ScrollBarThickness = 0
-    scroll.ScrollBarImageTransparency = 1
+    scroll.ScrollBarThickness = 6
+    scroll.ScrollBarImageTransparency = 0.7
     scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scroll.CanvasSize = UDim2.new(0,0,0,0)
     return frame, scroll
 end
 
@@ -73,48 +79,52 @@ local uiFolder = Instance.new("Folder", screenGui)
 uiFolder.Name = "UI_LS"
 
 -- Toggle & Lock buttons
-local toggleButton = createButton(uiFolder, "TOGGLE UI", UDim2.new(0,86,0,32), UDim2.new(0,4,0,20))
-local lockButton = createButton(uiFolder, "LOCK", UDim2.new(0,86,0,28), UDim2.new(0,4,0,52))
+local toggleButton = createButton(uiFolder, "TOGGLE UI", UDim2.new(0,100,0,36), UDim2.new(0,8,0,20))
+local lockButton = createButton(uiFolder, "LOCK", UDim2.new(0,100,0,36), UDim2.new(0,8,0,64))
 
 -- Main UI container
-local mainUI = createFrame(screenGui, UDim2.new(0,454,0,278), UDim2.new(0,138,0,6), "MAIN_UI")
+local mainUI = createFrame(screenGui, UDim2.new(0,480,0,300), UDim2.new(0,140,0,10), "MAIN_UI", true)
 
 -- Backgrounds
 local bgOuter = createFrame(mainUI, UDim2.new(1,0,1,0), UDim2.new(0,0,0,0), "BACKGROUND_OUTER", true)
-local bgInner = createFrame(bgOuter, UDim2.new(0,442,0,234), UDim2.new(0,6,0,40), "BACKGROUND_INNER", true)
+local bgInner = createFrame(bgOuter, UDim2.new(0,460,0,250), UDim2.new(0,10,0,40), "BACKGROUND_INNER", true)
 
 -- Title
-local titleFrame = createFrame(mainUI, UDim2.new(0,442,0,28), UDim2.new(0,6,0,4), "TITLE", true)
+local titleFrame = createFrame(mainUI, UDim2.new(0,460,0,32), UDim2.new(0,10,0,4), "TITLE", true)
 local titleLabel = Instance.new("TextLabel", titleFrame)
-titleLabel.Size = UDim2.new(1, -4, 1, 0)
+titleLabel.Size = UDim2.new(1, -8, 1, 0)
 titleLabel.Position = UDim2.new(0,4,0,0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "UI LIBRARY KOLT"
+titleLabel.Text = "KOLT UI LIBRARY"
 titleLabel.TextColor3 = TEXT_COLOR
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.FontFace = FONT
-titleLabel.TextSize = 18
+titleLabel.TextSize = 20
 
--- Tabs container
-local tabs = createFrame(bgInner, UDim2.new(0,434,0,32), UDim2.new(0,4,0,4), "TABS", true)
+-- Tabs container (horizontal scroll)
+local tabs = createFrame(bgInner, UDim2.new(0,440,0,36), UDim2.new(0,10,0,4), "TABS", true)
 local tabsFrame = Instance.new("ScrollingFrame", tabs)
-tabsFrame.Size = UDim2.new(1, -6, 1, -4)
+tabsFrame.Size = UDim2.new(1, -4, 1, -4)
 tabsFrame.Position = UDim2.new(0,2,0,2)
 tabsFrame.BackgroundTransparency = 1
 tabsFrame.BorderSizePixel = 0
-tabsFrame.ScrollBarThickness = 0
-tabsFrame.ScrollBarImageTransparency = 1
+tabsFrame.ScrollBarThickness = 6
+tabsFrame.ScrollBarImageTransparency = 0.7
 tabsFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
+tabsFrame.ScrollBarImageColor3 = ACCENT_COLOR
+tabsFrame.HorizontalScrollBarInset = Enum.ScrollBarInset.Always
+tabsFrame.CanvasSize = UDim2.new(0,0,0,0)
 
 -- Sections
-local leftSection, leftScroll = createScrollingSection(mainUI, "Left", UDim2.new(0,10,0,78), UDim2.new(0,204,0,190))
-local rightSection, rightScroll = createScrollingSection(mainUI, "Right", UDim2.new(0,220,0,78), UDim2.new(0,224,0,190))
+local leftSection, leftScroll = createScrollingSection(mainUI, "Left", UDim2.new(0,10,0,80), UDim2.new(0,210,0,180))
+local rightSection, rightScroll = createScrollingSection(mainUI, "Right", UDim2.new(0,230,0,80), UDim2.new(0,220,0,180))
 
 -- Tabs & Features Manager
 local TabsManager = { Tabs = {}, CurrentTab = nil }
 
 function TabsManager:AddTab(name)
     local btn = createButton(tabsFrame, name, UDim2.new(0,100,0,28), UDim2.new(0,0,0,0))
+    btn.AutoButtonColor = true
     btn.MouseButton1Click:Connect(function()
         self:SelectTab(name)
     end)
@@ -125,13 +135,11 @@ end
 
 function TabsManager:SelectTab(name)
     self.CurrentTab = name
+    -- Limpa sections
     for _, scroll in pairs({leftScroll, rightScroll}) do
-        for _,child in pairs(scroll:GetChildren()) do
-            if child:IsA("Frame") or child:IsA("TextButton") or child:IsA("TextLabel") then
-                child:Destroy()
-            end
-        end
+        scroll:ClearAllChildren()
     end
+    -- Adiciona features
     for _,tab in pairs(self.Tabs) do
         if tab.Name == name then
             for _,feat in pairs(tab.Features) do
