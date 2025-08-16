@@ -1,604 +1,539 @@
-local Library = {}
+-- ModuleScript for Kolt UI Library
+-- Place this in a ModuleScript and require it in a LocalScript
 
-function Library:CreateWindow(options)
-    local title = options.Title or "Untitled"
-    
-    -- Create the UI instances as provided
-    local CollectionService = game:GetService("CollectionService")
-    local G2L = {}
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI
-    G2L["KOLT UI_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
-    G2L["KOLT UI_1"]["Name"] = [[KOLT UI]]
-    G2L["KOLT UI_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
-    
-    -- Tags
-    CollectionService:AddTag(G2L["KOLT UI_1"], [[main]])
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES
-    G2L["FEATURES_2"] = Instance.new("Folder", G2L["KOLT UI_1"])
-    G2L["FEATURES_2"]["Name"] = [[FEATURES]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SLIDER
-    G2L["SLIDER_3"] = Instance.new("Folder", G2L["FEATURES_2"])
-    G2L["SLIDER_3"]["Name"] = [[SLIDER]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SLIDER.BACKGROUND 
-    G2L["BACKGROUND _4"] = Instance.new("Frame", G2L["SLIDER_3"])
-    G2L["BACKGROUND _4"]["Visible"] = false
-    G2L["BACKGROUND _4"]["ZIndex"] = 11
-    G2L["BACKGROUND _4"]["BorderSizePixel"] = 0
-    G2L["BACKGROUND _4"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["BACKGROUND _4"]["Size"] = UDim2.new(0, 188, 0, 20)
-    G2L["BACKGROUND _4"]["Position"] = UDim2.new(0, 8, 0, 72)
-    G2L["BACKGROUND _4"]["Name"] = [[BACKGROUND ]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SLIDER.BACKGROUND .PROGRESSBAR
-    G2L["PROGRESSBAR_5"] = Instance.new("Frame", G2L["BACKGROUND _4"])
-    G2L["PROGRESSBAR_5"]["BorderSizePixel"] = 0
-    G2L["PROGRESSBAR_5"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 242)
-    G2L["PROGRESSBAR_5"]["Size"] = UDim2.new(0, 184, 0, 16)
-    G2L["PROGRESSBAR_5"]["Position"] = UDim2.new(0, 2, 0, 2)
-    G2L["PROGRESSBAR_5"]["Name"] = [[PROGRESSBAR]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SLIDER.BACKGROUND .VALUE
-    G2L["VALUE_6"] = Instance.new("TextLabel", G2L["BACKGROUND _4"])
-    G2L["VALUE_6"]["BorderSizePixel"] = 0
-    G2L["VALUE_6"]["TextSize"] = 10
-    G2L["VALUE_6"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["VALUE_6"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["VALUE_6"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["VALUE_6"]["BackgroundTransparency"] = 1
-    G2L["VALUE_6"]["Size"] = UDim2.new(0, 188, 0, 20)
-    G2L["VALUE_6"]["Text"] = [[VALUE]]
-    G2L["VALUE_6"]["Name"] = [[VALUE]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SLIDER.BACKGROUND .UIStroke
-    G2L["UIStroke_7"] = Instance.new("UIStroke", G2L["BACKGROUND _4"])
-    G2L["UIStroke_7"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SEÇÃO
-    G2L["SEÇÃO_8"] = Instance.new("Folder", G2L["FEATURES_2"])
-    G2L["SEÇÃO_8"]["Name"] = [[SEÇÃO]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SEÇÃO.Frame
-    G2L["Frame_9"] = Instance.new("Frame", G2L["SEÇÃO_8"])
-    G2L["Frame_9"]["Visible"] = false
-    G2L["Frame_9"]["ZIndex"] = 9
-    G2L["Frame_9"]["BorderSizePixel"] = 0
-    G2L["Frame_9"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["Frame_9"]["Size"] = UDim2.new(0, 196, 0, 92)
-    G2L["Frame_9"]["Position"] = UDim2.new(0, 4, 0, 8)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SEÇÃO.Frame.UIStroke
-    G2L["UIStroke_a"] = Instance.new("UIStroke", G2L["Frame_9"])
-    G2L["UIStroke_a"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.SEÇÃO.Frame.NAME
-    G2L["NAME_b"] = Instance.new("TextLabel", G2L["Frame_9"])
-    G2L["NAME_b"]["ZIndex"] = 11
-    G2L["NAME_b"]["BorderSizePixel"] = 0
-    G2L["NAME_b"]["TextSize"] = 12
-    G2L["NAME_b"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["NAME_b"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["NAME_b"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["NAME_b"]["Size"] = UDim2.new(0, 40, 0, 8)
-    G2L["NAME_b"]["Text"] = [[NAME]]
-    G2L["NAME_b"]["Name"] = [[NAME]]
-    G2L["NAME_b"]["Position"] = UDim2.new(0, 14, 0, -4)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.BUTTON
-    G2L["BUTTON_c"] = Instance.new("Folder", G2L["FEATURES_2"])
-    G2L["BUTTON_c"]["Name"] = [[BUTTON]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.BUTTON.TextButton
-    G2L["TextButton_d"] = Instance.new("TextButton", G2L["BUTTON_c"])
-    G2L["TextButton_d"]["BorderSizePixel"] = 0
-    G2L["TextButton_d"]["TextSize"] = 20
-    G2L["TextButton_d"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["TextButton_d"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["TextButton_d"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["TextButton_d"]["ZIndex"] = 11
-    G2L["TextButton_d"]["Size"] = UDim2.new(0, 192, 0, 24)
-    G2L["TextButton_d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["TextButton_d"]["Text"] = [[BUTTON]]
-    G2L["TextButton_d"]["Visible"] = false
-    G2L["TextButton_d"]["Position"] = UDim2.new(0, 6, 0, 16)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.BUTTON.TextButton.UIStroke
-    G2L["UIStroke_e"] = Instance.new("UIStroke", G2L["TextButton_d"])
-    G2L["UIStroke_e"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-    G2L["UIStroke_e"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX
-    G2L["CHECKBOX_f"] = Instance.new("Folder", G2L["FEATURES_2"])
-    G2L["CHECKBOX_f"]["Name"] = [[CHECKBOX]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX.STATUS
-    G2L["STATUS_10"] = Instance.new("Frame", G2L["CHECKBOX_f"])
-    G2L["STATUS_10"]["ZIndex"] = 11
-    G2L["STATUS_10"]["BorderSizePixel"] = 0
-    G2L["STATUS_10"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["STATUS_10"]["Size"] = UDim2.new(0, 18, 0, 18)
-    G2L["STATUS_10"]["Position"] = UDim2.new(0, 7, 0, 47)
-    G2L["STATUS_10"]["Name"] = [[STATUS]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX.STATUS.UICorner
-    G2L["UICorner_11"] = Instance.new("UICorner", G2L["STATUS_10"])
-    G2L["UICorner_11"]["CornerRadius"] = UDim.new(0, 2)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX.STATUS.ATIVO
-    G2L["ATIVO_12"] = Instance.new("Frame", G2L["STATUS_10"])
-    G2L["ATIVO_12"]["BorderSizePixel"] = 0
-    G2L["ATIVO_12"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 255)
-    G2L["ATIVO_12"]["Size"] = UDim2.new(0, 14, 0, 14)
-    G2L["ATIVO_12"]["Position"] = UDim2.new(0, 2, 0, 2)
-    G2L["ATIVO_12"]["Name"] = [[ATIVO]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX.STATUS.ATIVO.UICorner
-    G2L["UICorner_13"] = Instance.new("UICorner", G2L["ATIVO_12"])
-    G2L["UICorner_13"]["CornerRadius"] = UDim.new(0, 2)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX.STATUS.UIStroke
-    G2L["UIStroke_14"] = Instance.new("UIStroke", G2L["STATUS_10"])
-    G2L["UIStroke_14"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.CHECKBOX.STATUS.TextLabel
-    G2L["TextLabel_15"] = Instance.new("TextLabel", G2L["STATUS_10"])
-    G2L["TextLabel_15"]["BorderSizePixel"] = 0
-    G2L["TextLabel_15"]["TextSize"] = 12
-    G2L["TextLabel_15"]["TextXAlignment"] = Enum.TextXAlignment.Left
-    G2L["TextLabel_15"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["TextLabel_15"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["TextLabel_15"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["TextLabel_15"]["BackgroundTransparency"] = 1
-    G2L["TextLabel_15"]["Size"] = UDim2.new(0, 166, 0, 18)
-    G2L["TextLabel_15"]["Text"] = [[CHECKBOX]]
-    G2L["TextLabel_15"]["Position"] = UDim2.new(0, 22, 0, 0)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.TAB_BUTTON
-    G2L["TAB_BUTTON_16"] = Instance.new("Folder", G2L["FEATURES_2"])
-    G2L["TAB_BUTTON_16"]["Name"] = [[TAB_BUTTON]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.TAB_BUTTON.TextButton
-    G2L["TextButton_17"] = Instance.new("TextButton", G2L["TAB_BUTTON_16"])
-    G2L["TextButton_17"]["BorderSizePixel"] = 0
-    G2L["TextButton_17"]["TextSize"] = 15
-    G2L["TextButton_17"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["TextButton_17"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["TextButton_17"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["TextButton_17"]["ZIndex"] = 10
-    G2L["TextButton_17"]["Size"] = UDim2.new(0, 66, 0, 24)
-    G2L["TextButton_17"]["Text"] = [[TAB]]
-    G2L["TextButton_17"]["Visible"] = false
-    G2L["TextButton_17"]["Position"] = UDim2.new(0, 114, 0, 68)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.FEATURES.TAB_BUTTON.TextButton.UIStroke
-    G2L["UIStroke_18"] = Instance.new("UIStroke", G2L["TextButton_17"])
-    G2L["UIStroke_18"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-    G2L["UIStroke_18"]["Thickness"] = 2
-    G2L["UIStroke_18"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU
-    G2L["MENU_19"] = Instance.new("Frame", G2L["KOLT UI_1"])
-    G2L["MENU_19"]["ZIndex"] = 6
-    G2L["MENU_19"]["BorderSizePixel"] = 0
-    G2L["MENU_19"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["MENU_19"]["Size"] = UDim2.new(0, 454, 0, 278)
-    G2L["MENU_19"]["Position"] = UDim2.new(0, 100, 0, 20)
-    G2L["MENU_19"]["Name"] = [[MENU]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND
-    G2L["BACKGROUND_1a"] = Instance.new("Frame", G2L["MENU_19"])
-    G2L["BACKGROUND_1a"]["BorderSizePixel"] = 0
-    G2L["BACKGROUND_1a"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["BACKGROUND_1a"]["Size"] = UDim2.new(0, 454, 0, 278)
-    G2L["BACKGROUND_1a"]["BorderColor3"] = Color3.fromRGB(0, 0, 255)
-    G2L["BACKGROUND_1a"]["Name"] = [[BACKGROUND]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND.BACKGROUND
-    G2L["BACKGROUND_1b"] = Instance.new("Frame", G2L["BACKGROUND_1a"])
-    G2L["BACKGROUND_1b"]["BorderSizePixel"] = 0
-    G2L["BACKGROUND_1b"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["BACKGROUND_1b"]["Size"] = UDim2.new(0, 442, 0, 234)
-    G2L["BACKGROUND_1b"]["Position"] = UDim2.new(0, 6, 0, 40)
-    G2L["BACKGROUND_1b"]["BorderColor3"] = Color3.fromRGB(0, 0, 255)
-    G2L["BACKGROUND_1b"]["Name"] = [[BACKGROUND]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND.BACKGROUND.TABs
-    G2L["TABs_1c"] = Instance.new("Frame", G2L["BACKGROUND_1b"])
-    G2L["TABs_1c"]["BorderSizePixel"] = 0
-    G2L["TABs_1c"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["TABs_1c"]["Size"] = UDim2.new(0, 434, 0, 32)
-    G2L["TABs_1c"]["Position"] = UDim2.new(0, 4, 0, 4)
-    G2L["TABs_1c"]["BorderColor3"] = Color3.fromRGB(0, 0, 255)
-    G2L["TABs_1c"]["Name"] = [[TABs]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND.BACKGROUND.TABs.Scrolli Tabs
-    G2L["Scrolli Tabs_1d"] = Instance.new("ScrollingFrame", G2L["TABs_1c"])
-    G2L["Scrolli Tabs_1d"]["ScrollingDirection"] = Enum.ScrollingDirection.X
-    G2L["Scrolli Tabs_1d"]["BorderSizePixel"] = 0
-    G2L["Scrolli Tabs_1d"]["VerticalScrollBarInset"] = Enum.ScrollBarInset.ScrollBar
-    G2L["Scrolli Tabs_1d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["Scrolli Tabs_1d"]["Name"] = [[Scrolli Tabs]]
-    G2L["Scrolli Tabs_1d"]["HorizontalScrollBarInset"] = Enum.ScrollBarInset.ScrollBar
-    G2L["Scrolli Tabs_1d"]["AutomaticCanvasSize"] = Enum.AutomaticSize.X
-    G2L["Scrolli Tabs_1d"]["AutomaticSize"] = Enum.AutomaticSize.X
-    G2L["Scrolli Tabs_1d"]["Size"] = UDim2.new(0, 418, 0, 28)
-    G2L["Scrolli Tabs_1d"]["Position"] = UDim2.new(0, 2, 0, 2)
-    G2L["Scrolli Tabs_1d"]["BackgroundTransparency"] = 1
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND.BACKGROUND.TABs.UIStroke
-    G2L["UIStroke_1e"] = Instance.new("UIStroke", G2L["TABs_1c"])
-    G2L["UIStroke_1e"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND.BACKGROUND.UIStroke
-    G2L["UIStroke_1f"] = Instance.new("UIStroke", G2L["BACKGROUND_1b"])
-    G2L["UIStroke_1f"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.BACKGROUND.UIStroke
-    G2L["UIStroke_20"] = Instance.new("UIStroke", G2L["BACKGROUND_1a"])
-    G2L["UIStroke_20"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.Right
-    G2L["Right_21"] = Instance.new("Frame", G2L["MENU_19"])
-    G2L["Right_21"]["BorderSizePixel"] = 0
-    G2L["Right_21"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["Right_21"]["Size"] = UDim2.new(0, 214, 0, 190)
-    G2L["Right_21"]["Position"] = UDim2.new(0, 230, 0, 80)
-    G2L["Right_21"]["Name"] = [[Right]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.Right.UIStroke
-    G2L["UIStroke_22"] = Instance.new("UIStroke", G2L["Right_21"])
-    G2L["UIStroke_22"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.Right.Scroll Right
-    G2L["Scroll Right_23"] = Instance.new("ScrollingFrame", G2L["Right_21"])
-    G2L["Scroll Right_23"]["ScrollingDirection"] = Enum.ScrollingDirection.Y
-    G2L["Scroll Right_23"]["BorderSizePixel"] = 0
-    G2L["Scroll Right_23"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["Scroll Right_23"]["Name"] = [[Scroll Right]]
-    G2L["Scroll Right_23"]["ScrollBarImageTransparency"] = 1
-    G2L["Scroll Right_23"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y
-    G2L["Scroll Right_23"]["Size"] = UDim2.new(0, 214, 0, 190)
-    G2L["Scroll Right_23"]["BackgroundTransparency"] = 1
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.Left
-    G2L["Left_24"] = Instance.new("Frame", G2L["MENU_19"])
-    G2L["Left_24"]["BorderSizePixel"] = 0
-    G2L["Left_24"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["Left_24"]["Size"] = UDim2.new(0, 214, 0, 190)
-    G2L["Left_24"]["Position"] = UDim2.new(0, 10, 0, 80)
-    G2L["Left_24"]["Name"] = [[Left]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.Left.Scroll Left
-    G2L["Scroll Left_25"] = Instance.new("ScrollingFrame", G2L["Left_24"])
-    G2L["Scroll Left_25"]["ScrollingDirection"] = Enum.ScrollingDirection.Y
-    G2L["Scroll Left_25"]["BorderSizePixel"] = 0
-    G2L["Scroll Left_25"]["CanvasPosition"] = Vector2.new(12, 190)
-    G2L["Scroll Left_25"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["Scroll Left_25"]["Name"] = [[Scroll Left]]
-    G2L["Scroll Left_25"]["ScrollBarImageTransparency"] = 1
-    G2L["Scroll Left_25"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y
-    G2L["Scroll Left_25"]["Size"] = UDim2.new(0, 214, 0, 190)
-    G2L["Scroll Left_25"]["BackgroundTransparency"] = 1
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.Left.UIStroke
-    G2L["UIStroke_26"] = Instance.new("UIStroke", G2L["Left_24"])
-    G2L["UIStroke_26"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.TITLE
-    G2L["TITLE_27"] = Instance.new("Frame", G2L["MENU_19"])
-    G2L["TITLE_27"]["BorderSizePixel"] = 0
-    G2L["TITLE_27"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["TITLE_27"]["Size"] = UDim2.new(0, 442, 0, 28)
-    G2L["TITLE_27"]["Position"] = UDim2.new(0, 6, 0, 4)
-    G2L["TITLE_27"]["BorderColor3"] = Color3.fromRGB(0, 0, 255)
-    G2L["TITLE_27"]["Name"] = [[TITLE]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.TITLE.TextLabel
-    G2L["TextLabel_28"] = Instance.new("TextLabel", G2L["TITLE_27"])
-    G2L["TextLabel_28"]["BorderSizePixel"] = 0
-    G2L["TextLabel_28"]["TextSize"] = 18
-    G2L["TextLabel_28"]["TextXAlignment"] = Enum.TextXAlignment.Left
-    G2L["TextLabel_28"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["TextLabel_28"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["TextLabel_28"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["TextLabel_28"]["BackgroundTransparency"] = 1
-    G2L["TextLabel_28"]["Size"] = UDim2.new(0, 438, 0, 28)
-    G2L["TextLabel_28"]["Text"] = [[TITLE]]
-    G2L["TextLabel_28"]["Position"] = UDim2.new(0, 4, 0, 0)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.MENU.TITLE.UIStroke
-    G2L["UIStroke_29"] = Instance.new("UIStroke", G2L["TITLE_27"])
-    G2L["UIStroke_29"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.UI_FRAG
-    G2L["UI_FRAG_2a"] = Instance.new("Folder", G2L["KOLT UI_1"])
-    G2L["UI_FRAG_2a"]["Name"] = [[UI_FRAG]]
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.UI_FRAG.Show/Hide
-    G2L["Show/Hide_2b"] = Instance.new("TextButton", G2L["UI_FRAG_2a"])
-    G2L["Show/Hide_2b"]["BorderSizePixel"] = 0
-    G2L["Show/Hide_2b"]["TextSize"] = 17
-    G2L["Show/Hide_2b"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["Show/Hide_2b"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["Show/Hide_2b"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["Show/Hide_2b"]["ZIndex"] = 999
-    G2L["Show/Hide_2b"]["Size"] = UDim2.new(0, 86, 0, 32)
-    G2L["Show/Hide_2b"]["Text"] = [[TOGGLE UI]]
-    G2L["Show/Hide_2b"]["Name"] = [[Show/Hide]]
-    G2L["Show/Hide_2b"]["Position"] = UDim2.new(0, 4, 0, 20)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.UI_FRAG.Show/Hide.UIStroke
-    G2L["UIStroke_2c"] = Instance.new("UIStroke", G2L["Show/Hide_2b"])
-    G2L["UIStroke_2c"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-    G2L["UIStroke_2c"]["Thickness"] = 2
-    G2L["UIStroke_2c"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.UI_FRAG.Lock/Unlock
-    G2L["Lock/Unlock_2d"] = Instance.new("TextButton", G2L["UI_FRAG_2a"])
-    G2L["Lock/Unlock_2d"]["BorderSizePixel"] = 0
-    G2L["Lock/Unlock_2d"]["TextSize"] = 15
-    G2L["Lock/Unlock_2d"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-    G2L["Lock/Unlock_2d"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
-    G2L["Lock/Unlock_2d"]["FontFace"] = Font.new([[rbxasset://fonts/families/GothamSSm.json]], Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-    G2L["Lock/Unlock_2d"]["ZIndex"] = 999
-    G2L["Lock/Unlock_2d"]["Size"] = UDim2.new(0, 86, 0, 28)
-    G2L["Lock/Unlock_2d"]["Text"] = [[LOCK]]
-    G2L["Lock/Unlock_2d"]["Name"] = [[Lock/Unlock]]
-    G2L["Lock/Unlock_2d"]["Position"] = UDim2.new(0, 4, 0, 52)
-    
-    -- Players.DH_SOARES00.PlayerGui.KOLT UI.UI_FRAG.Lock/Unlock.UIStroke
-    G2L["UIStroke_2e"] = Instance.new("UIStroke", G2L["Lock/Unlock_2d"])
-    G2L["UIStroke_2e"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-    G2L["UIStroke_2e"]["Thickness"] = 2
-    G2L["UIStroke_2e"]["Color"] = Color3.fromRGB(0, 0, 255)
-    
-    local gui = G2L["KOLT UI_1"]
-    
-    gui.MENU.TITLE.TextLabel.Text = title
-    
-    -- Add UIListLayouts
-    local listTabs = Instance.new("UIListLayout")
-    listTabs.Parent = gui.MENU.BACKGROUND.BACKGROUND.TABs["Scrolli Tabs"]
-    listTabs.FillDirection = Enum.FillDirection.Horizontal
-    listTabs.SortOrder = Enum.SortOrder.LayoutOrder
-    listTabs.Padding = UDim.new(0, 4)
-    
-    local listLeft = Instance.new("UIListLayout")
-    listLeft.Parent = gui.MENU.Left["Scroll Left"]
-    listLeft.SortOrder = Enum.SortOrder.LayoutOrder
-    listLeft.Padding = UDim.new(0, 4)
-    
-    local listRight = Instance.new("UIListLayout")
-    listRight.Parent = gui.MENU.Right["Scroll Right"]
-    listRight.SortOrder = Enum.SortOrder.LayoutOrder
-    listRight.Padding = UDim.new(0, 4)
-    
-    -- Draggable functionality
-    local UIS = game:GetService("UserInputService")
-    local locked = false
-    
-    local function makeDraggable(topbar, frame)
-        local dragging = false
-        local dragInput
-        local dragStart
-        local startPos
-        
-        local function update(input)
-            local delta = input.Position - dragStart
-            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-        
-        topbar.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 and not locked then
-                dragging = true
-                dragStart = input.Position
-                startPos = frame.Position
-                input.Changed:Connect(function()
-                    if input.UserInputState == Enum.UserInputState.End then
-                        dragging = false
-                    end
-                end)
-            end
-        end)
-        
-        topbar.InputChanged:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement then
-                dragInput = input
-            end
-        end)
-        
-        UIS.InputChanged:Connect(function(input)
-            if input == dragInput and dragging then
-                update(input)
-            end
-        end)
+local KoltUI = {}
+
+local CollectionService = game:GetService("CollectionService")
+local UserInputService = game:GetService("UserInputService")
+
+function KoltUI.new(title)
+    local self = setmetatable({}, {__index = KoltUI})
+    self.Tabs = {}
+    self.ActiveTab = nil
+
+    -- Create ScreenGui
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "Ui Kolt"
+    ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    CollectionService:AddTag(ScreenGui, "main")
+
+    -- FEATURES Folder
+    local FEATURES = Instance.new("Folder", ScreenGui)
+    FEATURES.Name = "FEATURES"
+    FEATURES.Visible = false  -- Hide templates
+
+    -- SLIDER Template
+    local SLIDER = Instance.new("Folder", FEATURES)
+    SLIDER.Name = "SLIDER"
+    local BACKGROUND_ = Instance.new("Frame", SLIDER)
+    BACKGROUND_.Name = "BACKGROUND "
+    BACKGROUND_.ZIndex = 11
+    BACKGROUND_.BorderSizePixel = 0
+    BACKGROUND_.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    BACKGROUND_.Size = UDim2.new(0, 198, 0, 20)
+    local PROGRESSBAR = Instance.new("Frame", BACKGROUND_)
+    PROGRESSBAR.Name = "PROGRESSBAR"
+    PROGRESSBAR.BorderSizePixel = 0
+    PROGRESSBAR.BackgroundColor3 = Color3.fromRGB(0, 0, 242)
+    PROGRESSBAR.Size = UDim2.new(0, 194, 0, 16)
+    PROGRESSBAR.Position = UDim2.new(0, 2, 0, 2)
+    local VALUE_ = Instance.new("TextLabel", BACKGROUND_)
+    VALUE_.Name = " VALUE"
+    VALUE_.BorderSizePixel = 0
+    VALUE_.TextSize = 10
+    VALUE_.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    VALUE_.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    VALUE_.TextColor3 = Color3.fromRGB(255, 255, 255)
+    VALUE_.BackgroundTransparency = 1
+    VALUE_.Size = UDim2.new(0, 188, 0, 20)
+    VALUE_.Text = "VALUE/VALUE"
+    local UIStroke1 = Instance.new("UIStroke", BACKGROUND_)
+    UIStroke1.Color = Color3.fromRGB(0, 0, 255)
+
+    -- CHECKBOX Template
+    local CHECKBOX = Instance.new("Folder", FEATURES)
+    CHECKBOX.Name = "CHECKBOX"
+    local Background = Instance.new("Frame", CHECKBOX)
+    Background.Name = "Background"
+    Background.ZIndex = 11
+    Background.BorderSizePixel = 0
+    Background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Background.Size = UDim2.new(0, 18, 0, 18)
+    local UICorner1 = Instance.new("UICorner", Background)
+    UICorner1.CornerRadius = UDim.new(0, 2)
+    local ON = Instance.new("Frame", Background)
+    ON.Name = "ON"
+    ON.Visible = false
+    ON.BorderSizePixel = 0
+    ON.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+    ON.Size = UDim2.new(0, 14, 0, 14)
+    ON.Position = UDim2.new(0, 2, 0, 2)
+    local UICorner2 = Instance.new("UICorner", ON)
+    UICorner2.CornerRadius = UDim.new(0, 2)
+    local UIStroke2 = Instance.new("UIStroke", Background)
+    UIStroke2.Color = Color3.fromRGB(0, 0, 255)
+    local TextLabel = Instance.new("TextLabel", Background)
+    TextLabel.BorderSizePixel = 0
+    TextLabel.TextSize = 12
+    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Size = UDim2.new(0, 178, 0, 18)
+    TextLabel.Position = UDim2.new(0, 22, 0, 0)
+    TextLabel.Text = "CHECKBOX"
+    local OFF = Instance.new("Frame", Background)
+    OFF.Name = "OFF"
+    OFF.BorderSizePixel = 0
+    OFF.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    OFF.Size = UDim2.new(0, 14, 0, 14)
+    OFF.Position = UDim2.new(0, 2, 0, 2)
+    OFF.BackgroundTransparency = 1
+    local UIStroke3 = Instance.new("UIStroke", OFF)
+    UIStroke3.Color = Color3.fromRGB(0, 0, 255)
+    local UICorner3 = Instance.new("UICorner", OFF)
+    UICorner3.CornerRadius = UDim.new(0, 2)
+
+    -- BUTTON Template
+    local BUTTON = Instance.new("Folder", FEATURES)
+    BUTTON.Name = "BUTTON"
+    local TextButton = Instance.new("TextButton", BUTTON)
+    TextButton.BorderSizePixel = 0
+    TextButton.TextSize = 12
+    TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    TextButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    TextButton.ZIndex = 11
+    TextButton.Size = UDim2.new(0, 198, 0, 20)
+    TextButton.Text = "Click Me"
+    local UIStroke4 = Instance.new("UIStroke", TextButton)
+    UIStroke4.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    UIStroke4.Thickness = 0.9
+    UIStroke4.Color = Color3.fromRGB(0, 0, 255)
+
+    -- SEÇÃO Template
+    local SEÇÃO = Instance.new("Folder", FEATURES)
+    SEÇÃO.Name = "SEÇÃO"
+    local CONTAINER = Instance.new("Frame", SEÇÃO)
+    CONTAINER.Name = "CONTAINER"
+    CONTAINER.ZIndex = 9
+    CONTAINER.BorderSizePixel = 0
+    CONTAINER.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    CONTAINER.Size = UDim2.new(0, 206, 0, 112)
+    CONTAINER.BackgroundTransparency = 1
+    local NAME = Instance.new("TextLabel", CONTAINER)
+    NAME.Name = "NAME"
+    NAME.ZIndex = 11
+    NAME.BorderSizePixel = 0
+    NAME.TextSize = 12
+    NAME.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    NAME.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    NAME.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NAME.Size = UDim2.new(0, 40, 0, 8)
+    NAME.Text = "NAME"
+    NAME.Position = UDim2.new(0, 14, 0, -4)
+    local UIStroke5 = Instance.new("UIStroke", CONTAINER)
+    UIStroke5.Color = Color3.fromRGB(0, 0, 255)
+
+    -- TAB_BUTTON Template
+    local TAB_BUTTON = Instance.new("Folder", FEATURES)
+    TAB_BUTTON.Name = "TAB_BUTTON"
+    local Button_Tab = Instance.new("TextButton", TAB_BUTTON)
+    Button_Tab.Name = "Button_Tab"
+    Button_Tab.BorderSizePixel = 0
+    Button_Tab.TextSize = 15
+    Button_Tab.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button_Tab.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Button_Tab.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    Button_Tab.ZIndex = 10
+    Button_Tab.Size = UDim2.new(0, 48, 0, 20)
+    Button_Tab.Text = "TAB"
+    local UIStroke6 = Instance.new("UIStroke", Button_Tab)
+    UIStroke6.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    UIStroke6.Thickness = 2
+    UIStroke6.Color = Color3.fromRGB(0, 0, 255)
+
+    -- UI OPEN/LOCK
+    local UI_OPEN_LOCK = Instance.new("Folder", ScreenGui)
+    UI_OPEN_LOCK.Name = "UI OPEN/LOCK"
+    local Show_Hide = Instance.new("TextButton", UI_OPEN_LOCK)
+    Show_Hide.Name = "Show/Hide"
+    Show_Hide.BorderSizePixel = 0
+    Show_Hide.TextSize = 17
+    Show_Hide.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Show_Hide.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Show_Hide.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    Show_Hide.ZIndex = 999
+    Show_Hide.Size = UDim2.new(0, 86, 0, 30)
+    Show_Hide.Text = "Toggle UI"
+    Show_Hide.Position = UDim2.new(0, 4, 0, 20)
+    local UIStroke7 = Instance.new("UIStroke", Show_Hide)
+    UIStroke7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    UIStroke7.Thickness = 2
+    UIStroke7.Color = Color3.fromRGB(0, 0, 255)
+    local Lock_Unlock = Instance.new("TextButton", UI_OPEN_LOCK)
+    Lock_Unlock.Name = "Lock/Unlock"
+    Lock_Unlock.BorderSizePixel = 0
+    Lock_Unlock.TextSize = 20
+    Lock_Unlock.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Lock_Unlock.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Lock_Unlock.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+    Lock_Unlock.ZIndex = 999
+    Lock_Unlock.Size = UDim2.new(0, 86, 0, 30)
+    Lock_Unlock.Text = "Lock"
+    Lock_Unlock.Position = UDim2.new(0, 4, 0, 52)
+    local UIStroke8 = Instance.new("UIStroke", Lock_Unlock)
+    UIStroke8.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    UIStroke8.Thickness = 2
+    UIStroke8.Color = Color3.fromRGB(0, 0, 255)
+    local BACKGROUND_open = Instance.new("Frame", UI_OPEN_LOCK)
+    BACKGROUND_open.Name = "BACKGROUND"
+    BACKGROUND_open.ZIndex = 998
+    BACKGROUND_open.BorderSizePixel = 0
+    BACKGROUND_open.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    BACKGROUND_open.Size = UDim2.new(0, 96, 0, 70)
+    BACKGROUND_open.Position = UDim2.new(0, -2, 0, 16)
+
+    -- UI Folder
+    local UI = Instance.new("Folder", ScreenGui)
+    UI.Name = "UI"
+
+    -- MENU
+    local MENU = Instance.new("Frame", UI)
+    MENU.Name = "MENU"
+    MENU.ZIndex = 6
+    MENU.BorderSizePixel = 0
+    MENU.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    MENU.Size = UDim2.new(0, 454, 0, 278)
+    MENU.Position = UDim2.new(0, 98, 0, 20)
+    local BACKGROUND_menu = Instance.new("Frame", MENU)
+    BACKGROUND_menu.Name = "BACKGROUND"
+    BACKGROUND_menu.BorderSizePixel = 0
+    BACKGROUND_menu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    BACKGROUND_menu.Size = UDim2.new(0, 454, 0, 278)
+    local BACKGROUND_inner = Instance.new("Frame", BACKGROUND_menu)
+    BACKGROUND_inner.Name = "BACKGROUND"
+    BACKGROUND_inner.BorderSizePixel = 0
+    BACKGROUND_inner.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    BACKGROUND_inner.Size = UDim2.new(0, 442, 0, 234)
+    BACKGROUND_inner.Position = UDim2.new(0, 6, 0, 40)
+    local TABs = Instance.new("Frame", BACKGROUND_inner)
+    TABs.Name = "TABs"
+    TABs.BorderSizePixel = 0
+    TABs.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    TABs.Size = UDim2.new(0, 434, 0, 32)
+    TABs.Position = UDim2.new(0, 4, 0, 4)
+    local Scrolli_Tabs = Instance.new("ScrollingFrame", TABs)
+    Scrolli_Tabs.Name = "Scrolli Tabs"
+    Scrolli_Tabs.ScrollingDirection = Enum.ScrollingDirection.X
+    Scrolli_Tabs.BorderSizePixel = 0
+    Scrolli_Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Scrolli_Tabs.HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+    Scrolli_Tabs.AutomaticCanvasSize = Enum.AutomaticSize.X
+    Scrolli_Tabs.Size = UDim2.new(0, 418, 0, 28)
+    Scrolli_Tabs.Position = UDim2.new(0, 2, 0, 2)
+    Scrolli_Tabs.BackgroundTransparency = 1
+    local UIStroke9 = Instance.new("UIStroke", TABs)
+    UIStroke9.Color = Color3.fromRGB(0, 0, 255)
+    local UIStroke10 = Instance.new("UIStroke", BACKGROUND_inner)
+    UIStroke10.Color = Color3.fromRGB(0, 0, 255)
+    local UIStroke11 = Instance.new("UIStroke", BACKGROUND_menu)
+    UIStroke11.Color = Color3.fromRGB(0, 0, 255)
+    local TITLE = Instance.new("Frame", MENU)
+    TITLE.Name = "TITLE"
+    TITLE.BorderSizePixel = 0
+    TITLE.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    TITLE.Size = UDim2.new(0, 442, 0, 28)
+    TITLE.Position = UDim2.new(0, 6, 0, 4)
+    local TextLabel_title = Instance.new("TextLabel", TITLE)
+    TextLabel_title.BorderSizePixel = 0
+    TextLabel_title.TextSize = 18
+    TextLabel_title.TextXAlignment = Enum.TextXAlignment.Left
+    TextLabel_title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel_title.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    TextLabel_title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel_title.BackgroundTransparency = 1
+    TextLabel_title.Size = UDim2.new(0, 438, 0, 28)
+    TextLabel_title.Position = UDim2.new(0, 4, 0, 0)
+    TextLabel_title.Text = title
+    local UIStroke12 = Instance.new("UIStroke", TITLE)
+    UIStroke12.Color = Color3.fromRGB(0, 0, 255)
+    local Frame_divider = Instance.new("Frame", TITLE)
+    Frame_divider.BorderSizePixel = 0
+    Frame_divider.BackgroundColor3 = Color3.fromRGB(129, 65, 255)
+    Frame_divider.Size = UDim2.new(0, 442, 0, 2)
+    Frame_divider.Position = UDim2.new(0, 0, 0, 31)
+    local UICorner4 = Instance.new("UICorner", Frame_divider)
+    local Left = Instance.new("Frame", MENU)
+    Left.Name = "Left"
+    Left.ZIndex = 6
+    Left.BorderSizePixel = 0
+    Left.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Left.Size = UDim2.new(0, 214, 0, 190)
+    Left.Position = UDim2.new(0, 10, 0, 80)
+    local UIStroke13 = Instance.new("UIStroke", Left)
+    UIStroke13.Color = Color3.fromRGB(0, 0, 255)
+    local Scroll_Left = Instance.new("ScrollingFrame", Left)
+    Scroll_Left.Name = "Scroll Left"
+    Scroll_Left.ScrollingDirection = Enum.ScrollingDirection.Y
+    Scroll_Left.BorderSizePixel = 0
+    Scroll_Left.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Scroll_Left.ScrollBarImageTransparency = 1
+    Scroll_Left.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Scroll_Left.Size = UDim2.new(0, 214, 0, 190)
+    Scroll_Left.BackgroundTransparency = 1
+    local Right = Instance.new("Frame", MENU)
+    Right.Name = "Right"
+    Right.ZIndex = 6
+    Right.BorderSizePixel = 0
+    Right.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Right.Size = UDim2.new(0, 214, 0, 190)
+    Right.Position = UDim2.new(0, 230, 0, 80)
+    local UIStroke14 = Instance.new("UIStroke", Right)
+    UIStroke14.Color = Color3.fromRGB(0, 0, 255)
+    local Scroll_Right = Instance.new("ScrollingFrame", Right)
+    Scroll_Right.Name = "Scroll Right"
+    Scroll_Right.ScrollingDirection = Enum.ScrollingDirection.Y
+    Scroll_Right.BorderSizePixel = 0
+    Scroll_Right.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Scroll_Right.ScrollBarImageTransparency = 1
+    Scroll_Right.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Scroll_Right.Size = UDim2.new(0, 214, 0, 190)
+    Scroll_Right.BackgroundTransparency = 1
+
+    -- Hide original Left and Right
+    Left.Visible = false
+    Right.Visible = false
+
+    -- Tab scroll layout
+    local TabLayout = Instance.new("UIListLayout", Scrolli_Tabs)
+    TabLayout.FillDirection = Enum.FillDirection.Horizontal
+    TabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    TabLayout.Padding = UDim.new(0, 4)
+
+    -- Drag functionality
+    local dragEnabled = true
+    local dragging = false
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+
+    local function updateDrag(input)
+        local delta = input.Position - dragStart
+        MENU.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
-    
-    makeDraggable(gui.MENU.TITLE, gui.MENU)
-    
-    -- Toggle UI button
-    local toggleBtn = gui.UI_FRAG["Show/Hide"]
-    toggleBtn.MouseButton1Click:Connect(function()
-        gui.MENU.Visible = not gui.MENU.Visible
-    end)
-    
-    -- Lock/Unlock button
-    local lockBtn = gui.UI_FRAG["Lock/Unlock"]
-    lockBtn.Text = "LOCK"
-    lockBtn.MouseButton1Click:Connect(function()
-        locked = not locked
-        lockBtn.Text = locked and "UNLOCK" or "LOCK"
-    end)
-    
-    -- Window object
-    local window = {}
-    local tabs = {}
-    local currentTab = nil
-    
-    function window:AddTab(name)
-        local tabBtn = gui.FEATURES.TAB_BUTTON.TextButton:Clone()
-        tabBtn.Visible = true
-        tabBtn.Text = name
-        tabBtn.Parent = gui.MENU.BACKGROUND.BACKGROUND.TABs["Scrolli Tabs"]
-        
-        local tab = {}
-        tab.leftSections = {}
-        tab.rightSections = {}
-        tab.button = tabBtn
-        tabs[name] = tab
-        
-        local function select()
-            if currentTab == tab then return end
-            currentTab = tab
-            
-            for _, t in pairs(tabs) do
-                for _, sec in ipairs(t.leftSections) do
-                    sec.Visible = false
+
+    TITLE.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 and dragEnabled then
+            dragging = true
+            dragStart = input.Position
+            startPos = MENU.Position
+            local conn
+            conn = input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    conn:Disconnect()
                 end
-                for _, sec in ipairs(t.rightSections) do
-                    sec.Visible = false
-                end
-                t.button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                t.button.UIStroke.Color = Color3.fromRGB(0, 0, 255)
-            end
-            
-            for _, sec in ipairs(tab.leftSections) do
-                sec.Visible = true
-            end
-            for _, sec in ipairs(tab.rightSections) do
-                sec.Visible = true
-            end
-            
-            tabBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
-            tabBtn.UIStroke.Color = Color3.fromRGB(255, 255, 255)
+            end)
         end
-        
-        tabBtn.MouseButton1Click:Connect(select)
-        if not currentTab then select() end
-        
-        local function createContainer(side, secName)
-            local section = gui.FEATURES["SEÇÃO"].Frame:Clone()
-            section.Visible = false
-            section.Parent = side == "left" and gui.MENU.Left["Scroll Left"] or gui.MENU.Right["Scroll Right"]
-            section.NAME.Text = secName
-            section.Size = UDim2.new(1, 0, 0, 0)
-            section.AutomaticSize = Enum.AutomaticSize.Y
-            
-            local list = Instance.new("UIListLayout", section)
-            list.SortOrder = Enum.SortOrder.LayoutOrder
-            list.Padding = UDim.new(0, 8)
-            list.HorizontalAlignment = Enum.HorizontalAlignment.Left
-            
-            table.insert(side == "left" and tab.leftSections or tab.rightSections, section)
-            if currentTab == tab then section.Visible = true end
-            
-            local cont = {}
-            
-            function cont:AddButton(opts)
-                local btn = gui.FEATURES.BUTTON.TextButton:Clone()
+    end)
+
+    TITLE.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            updateDrag(input)
+        end
+    end)
+
+    -- Toggle UI
+    Show_Hide.MouseButton1Click:Connect(function()
+        MENU.Visible = not MENU.Visible
+    end)
+
+    -- Lock/Unlock (toggle drag)
+    local locked = false
+    Lock_Unlock.MouseButton1Click:Connect(function()
+        locked = not locked
+        if locked then
+            Lock_Unlock.Text = "Unlock"
+            dragEnabled = false
+        else
+            Lock_Unlock.Text = "Lock"
+            dragEnabled = true
+        end
+    end)
+
+    -- CreateTab function
+    function self:CreateTab(name)
+        local tab = {}
+        tab.Sections = {}
+
+        local button = FEATURES.TAB_BUTTON.Button_Tab:Clone()
+        button.Text = name
+        button.Parent = Scrolli_Tabs
+        button.Visible = true
+
+        local tabLeft = Left:Clone()
+        tabLeft.Name = name .. "_Left"
+        tabLeft.Parent = MENU
+        tabLeft.Visible = false
+        tabLeft.Position = Left.Position  -- Overlap
+
+        local tabRight = Right:Clone()
+        tabRight.Name = name .. "_Right"
+        tabRight.Parent = MENU
+        tabRight.Visible = false
+        tabRight.Position = Right.Position  -- Overlap
+
+        -- Layouts for scrolls
+        local leftLayout = Instance.new("UIListLayout", tabLeft["Scroll Left"])
+        leftLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        leftLayout.Padding = UDim.new(0, 4)
+
+        local rightLayout = Instance.new("UIListLayout", tabRight["Scroll Right"])
+        rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        rightLayout.Padding = UDim.new(0, 4)
+
+        tab.Left = tabLeft
+        tab.Right = tabRight
+        tab.Button = button
+
+        self.Tabs[name] = tab
+
+        button.MouseButton1Click:Connect(function()
+            self:SelectTab(name)
+        end)
+
+        if not self.ActiveTab then
+            self:SelectTab(name)
+        end
+
+        -- CreateSection function for this tab
+        function tab:CreateSection(sectionName, side)
+            side = side:lower()
+            local scroll
+            if side == "left" then
+                scroll = self.Left["Scroll Left"]
+            elseif side == "right" then
+                scroll = self.Right["Scroll Right"]
+            else
+                error("Side must be 'Left' or 'Right'")
+            end
+
+            local container = FEATURES.SEÇÃO.CONTAINER:Clone()
+            container.NAME.Text = sectionName
+            container.Parent = scroll
+            container.Visible = true
+            container.Size = UDim2.new(1, 0, 0, 0)
+            container.AutomaticSize = Enum.AutomaticSize.Y
+
+            local sectionLayout = Instance.new("UIListLayout", container)
+            sectionLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            sectionLayout.Padding = UDim.new(0, 4)
+
+            local sectionPadding = Instance.new("UIPadding", container)
+            sectionPadding.PaddingTop = UDim.new(0, 8)
+            sectionPadding.PaddingLeft = UDim.new(0, 4)
+            sectionPadding.PaddingRight = UDim.new(0, 4)
+            sectionPadding.PaddingBottom = UDim.new(0, 4)
+
+            local sectionObj = {}
+            sectionObj.Container = container
+
+            -- CreateButton
+            function sectionObj:CreateButton(buttonName, callback)
+                local btn = FEATURES.BUTTON.TextButton:Clone()
+                btn.Text = buttonName
+                btn.Parent = container
                 btn.Visible = true
-                btn.Text = opts.Text or "Button"
-                btn.Parent = section
-                btn.MouseButton1Click:Connect(opts.Func or function() end)
+                btn.Size = UDim2.new(1, 0, 0, 20)
+                btn.Activated:Connect(callback)
             end
-            
-            function cont:AddCheckbox(opts)
-                local check = gui.FEATURES.CHECKBOX.STATUS:Clone()
-                check.TextLabel.Text = opts.Text or "Checkbox"
-                check.Parent = section
-                
-                local enabled = opts.Default or false
-                check.ATIVO.Visible = enabled
-                local cb = opts.Callback or function() end
-                
-                local function toggle()
-                    enabled = not enabled
-                    check.ATIVO.Visible = enabled
-                    cb(enabled)
-                end
-                
-                check.InputBegan:Connect(function(input)
+
+            -- CreateToggle (Checkbox)
+            function sectionObj:CreateToggle(toggleName, default, callback)
+                local chk = FEATURES.CHECKBOX.Background:Clone()
+                chk.TextLabel.Text = toggleName
+                chk.Parent = container
+                chk.Visible = true
+                chk.Size = UDim2.new(1, 0, 0, 18)
+                local state = default
+                chk.ON.Visible = state
+                chk.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        toggle()
-                    end
-                end)
-                
-                check.TextLabel.InputBegan:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        toggle()
+                        state = not state
+                        chk.ON.Visible = state
+                        callback(state)
                     end
                 end)
             end
-            
-            function cont:AddSlider(opts)
-                local slider = gui.FEATURES.SLIDER["BACKGROUND "]:Clone()
-                slider.Visible = true
-                slider.Parent = section
-                
-                local min = opts.Min or 0
-                local max = opts.Max or 100
-                local value = opts.Default or min
-                local rounding = opts.Rounding or 0
-                local cb = opts.Callback or function() end
-                
-                local function setValue(val)
-                    val = math.clamp(val, min, max)
-                    if rounding == 0 then
-                        val = math.floor(val + 0.5)
-                    else
-                        local mult = 10 ^ rounding
-                        val = math.floor(val * mult + 0.5) / mult
-                    end
-                    slider.VALUE.Text = tostring(val)
-                    local pct = (val - min) / (max - min)
-                    slider.PROGRESSBAR.Size = UDim2.new(pct, 0, 0, 16)
-                    cb(val)
+
+            -- CreateSlider
+            function sectionObj:CreateSlider(sliderName, min, max, default, callback)
+                local sld = FEATURES.SLIDER["BACKGROUND "]:Clone()
+                sld.Parent = container
+                sld.Visible = true
+                sld.Size = UDim2.new(1, 0, 0, 20)
+                local value = default
+                local function updateValue(newValue)
+                    newValue = math.clamp(math.round(newValue), min, max)  -- Assume integer
+                    value = newValue
+                    sld[" VALUE"].Text = value .. "/" .. max
+                    local progress = (value - min) / (max - min)
+                    sld.PROGRESSBAR.Size = UDim2.new(progress, 0, 1, 0)
+                    callback(value)
                 end
-                
-                setValue(value)
-                
+                updateValue(default)
                 local dragging = false
-                
-                slider.InputBegan:Connect(function(input)
+                sld.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
                         dragging = true
                     end
                 end)
-                
-                slider.InputEnded:Connect(function(input)
+                sld.InputEnded:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
                         dragging = false
                     end
                 end)
-                
-                UIS.InputChanged:Connect(function(input)
+                UserInputService.InputChanged:Connect(function(input)
                     if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                        local rel = input.Position.X - slider.AbsolutePosition.X
-                        local pct = math.clamp(rel / slider.AbsoluteSize.X, 0, 1)
-                        local val = min + (max - min) * pct
-                        setValue(val)
+                        local relativeX = math.clamp((input.Position.X - sld.AbsolutePosition.X) / sld.AbsoluteSize.X, 0, 1)
+                        local newValue = min + (max - min) * relativeX
+                        updateValue(newValue)
                     end
                 end)
             end
-            
-            return cont
+
+            tab.Sections[sectionName] = sectionObj
+            return sectionObj
         end
-        
-        function tab:AddLeftContainer(name)
-            return createContainer("left", name)
-        end
-        
-        function tab:AddRightContainer(name)
-            return createContainer("right", name)
-        end
-        
+
         return tab
     end
-    
-    return window
+
+    -- SelectTab function
+    function self:SelectTab(name)
+        if self.ActiveTab then
+            local oldTab = self.Tabs[self.ActiveTab]
+            oldTab.Left.Visible = false
+            oldTab.Right.Visible = false
+            oldTab.Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        end
+        local newTab = self.Tabs[name]
+        newTab.Left.Visible = true
+        newTab.Right.Visible = true
+        newTab.Button.BackgroundColor3 = Color3.fromRGB(0, 0, 50)  -- Highlight
+        self.ActiveTab = name
+    end
+
+    return self
 end
 
-return Library
+return KoltUI
