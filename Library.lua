@@ -1,210 +1,189 @@
--- 🎨 KOLT UI Library - Modular (Tabs → Sections → Options)
+-- Kolt UI Library
 local Players = game:GetService("Players")
+local CollectionService = game:GetService("CollectionService")
 local UserInputService = game:GetService("UserInputService")
-local player = Players.LocalPlayer
 
 local Library = {}
 Library.__index = Library
 
--- Janela principal
-function Library:CreateWindow(title, config)
-    local Window = {}
-    setmetatable(Window, Library)
+-- Função principal: criar janela
+function Library:CreateWindow(title)
+    local self = setmetatable({}, Library)
 
-    -- Gui principal
-    Window.Gui = Instance.new("ScreenGui")
-    Window.Gui.Name = "KoltUI"
-    Window.Gui.Parent = player:WaitForChild("PlayerGui")
+    -- ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "KoltUI"
+    screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    CollectionService:AddTag(screenGui, "main")
+    self.Gui = screenGui
 
-    -- Frame principal
-    Window.Main = Instance.new("Frame")
-    Window.Main.Size = config.Size or UDim2.new(0, 454, 0, 278)
-    Window.Main.Position = UDim2.new(0.5, -227, 0.5, -139)
-    Window.Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    Window.Main.Parent = Window.Gui
+    -- Menu principal
+    local menu = Instance.new("Frame")
+    menu.Name = "Menu"
+    menu.Size = UDim2.new(0, 454, 0, 278)
+    menu.Position = UDim2.new(0.5, -227, 0.5, -139)
+    menu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    menu.Parent = screenGui
+    self.Menu = menu
 
-    -- Título
-    local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, 0, 0, 24)
-    Title.BackgroundTransparency = 1
-    Title.Text = title or "KOLT UI"
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.Font = Enum.Font.SourceSansBold
-    Title.TextSize = 18
-    Title.Parent = Window.Main
+    local titleFrame = Instance.new("Frame")
+    titleFrame.Name = "Title"
+    titleFrame.Size = UDim2.new(1, -12, 0, 28)
+    titleFrame.Position = UDim2.new(0, 6, 0, 4)
+    titleFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    titleFrame.Parent = menu
 
-    -- Tabs container
-    Window.TabBar = Instance.new("Frame")
-    Window.TabBar.Size = UDim2.new(1, 0, 0, 30)
-    Window.TabBar.Position = UDim2.new(0, 0, 0, 24)
-    Window.TabBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    Window.TabBar.Parent = Window.Main
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Text = title or "Kolt UI"
+    titleLabel.Size = UDim2.new(1, 0, 1, 0)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.TextSize = 18
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.Parent = titleFrame
 
-    local Layout = Instance.new("UIListLayout", Window.TabBar)
-    Layout.FillDirection = Enum.FillDirection.Horizontal
-    Layout.Padding = UDim.new(0, 5)
+    self.Tabs = {}
 
-    Window.Tabs = {}
-    return Window
+    return self
 end
 
--- Criar aba
-function Library:CreateTab(name)
-    local Tab = {}
-    setmetatable(Tab, Library)
+-- Criar Tab
+function Library:CreateTab(tabName)
+    local tab = {}
+    tab.Sections = {}
 
-    Tab.Button = Instance.new("TextButton")
-    Tab.Button.Size = UDim2.new(0, 80, 1, 0)
-    Tab.Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    Tab.Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Tab.Button.Text = name
-    Tab.Button.Parent = self.TabBar
+    -- Container para a Tab
+    local tabFrame = Instance.new("Frame")
+    tabFrame.Name = tabName
+    tabFrame.Size = UDim2.new(1, -20, 1, -40)
+    tabFrame.Position = UDim2.new(0, 10, 0, 40)
+    tabFrame.BackgroundTransparency = 1
+    tabFrame.Visible = false
+    tabFrame.Parent = self.Menu
 
-    Tab.Content = Instance.new("Frame")
-    Tab.Content.Size = UDim2.new(1, 0, 1, -54)
-    Tab.Content.Position = UDim2.new(0, 0, 0, 54)
-    Tab.Content.BackgroundTransparency = 1
-    Tab.Content.Visible = false
-    Tab.Content.Parent = self.Main
+    tab.Frame = tabFrame
+    table.insert(self.Tabs, tab)
 
-    local Left = Instance.new("ScrollingFrame", Tab.Content)
-    Left.Name = "Left"
-    Left.Size = UDim2.new(0.5, -5, 1, 0)
-    Left.CanvasSize = UDim2.new(0, 0, 0, 0)
-    Left.BackgroundTransparency = 1
-    Left.ScrollBarThickness = 4
+    -- Botão da Tab
+    local button = Instance.new("TextButton")
+    button.Text = tabName
+    button.Size = UDim2.new(0, 100, 0, 28)
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Parent = self.Menu
 
-    local Right = Instance.new("ScrollingFrame", Tab.Content)
-    Right.Name = "Right"
-    Right.Size = UDim2.new(0.5, -5, 1, 0)
-    Right.Position = UDim2.new(0.5, 5, 0, 0)
-    Right.CanvasSize = UDim2.new(0, 0, 0, 0)
-    Right.BackgroundTransparency = 1
-    Right.ScrollBarThickness = 4
+    local index = #self.Tabs
+    button.Position = UDim2.new(0, 10 + (index-1)*110, 0, 0)
 
-    Tab.Sections = { Left = Left, Right = Right }
-
-    Tab.Button.MouseButton1Click:Connect(function()
-        for _, t in pairs(self.Tabs) do
-            t.Content.Visible = false
+    button.MouseButton1Click:Connect(function()
+        for _, t in ipairs(self.Tabs) do
+            t.Frame.Visible = false
         end
-        Tab.Content.Visible = true
+        tabFrame.Visible = true
     end)
 
-    table.insert(self.Tabs, Tab)
-    if #self.Tabs == 1 then
-        Tab.Content.Visible = true
+    return tab
+end
+
+-- Criar Section
+function Library:CreateSection(tab, sectionName)
+    local section = {}
+    local sectionFrame = Instance.new("Frame")
+    sectionFrame.Name = sectionName
+    sectionFrame.Size = UDim2.new(1, -20, 0, 100)
+    sectionFrame.Position = UDim2.new(0, 10, 0, #tab.Sections * 110)
+    sectionFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    sectionFrame.Parent = tab.Frame
+
+    local sectionLabel = Instance.new("TextLabel")
+    sectionLabel.Text = sectionName
+    sectionLabel.Size = UDim2.new(1, 0, 0, 20)
+    sectionLabel.BackgroundTransparency = 1
+    sectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sectionLabel.Font = Enum.Font.GothamBold
+    sectionLabel.Parent = sectionFrame
+
+    section.Frame = sectionFrame
+    table.insert(tab.Sections, section)
+
+    -- Métodos da seção
+    function section:AddButton(name, callback)
+        local btn = Instance.new("TextButton")
+        btn.Text = name
+        btn.Size = UDim2.new(1, -10, 0, 28)
+        btn.Position = UDim2.new(0, 5, 0, 25)
+        btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.Parent = sectionFrame
+        btn.MouseButton1Click:Connect(function()
+            if callback then callback() end
+        end)
     end
 
-    return Tab
-end
+    function section:AddCheckbox(name, callback)
+        local box = Instance.new("TextButton")
+        box.Text = "[ ] " .. name
+        box.Size = UDim2.new(1, -10, 0, 28)
+        box.Position = UDim2.new(0, 5, 0, 60)
+        box.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        box.TextColor3 = Color3.fromRGB(255, 255, 255)
+        box.Parent = sectionFrame
 
--- Criar seção
-function Library:CreateSection(name, side)
-    local Section = Instance.new("Frame")
-    Section.Size = UDim2.new(1, -10, 0, 30)
-    Section.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        local state = false
+        box.MouseButton1Click:Connect(function()
+            state = not state
+            box.Text = (state and "[X] " or "[ ] ") .. name
+            if callback then callback(state) end
+        end)
+    end
 
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1, 0, 0, 24)
-    Label.BackgroundTransparency = 1
-    Label.Text = name
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.Font = Enum.Font.SourceSansBold
-    Label.TextSize = 16
-    Label.Parent = Section
+    function section:AddSlider(name, min, max, default, step, callback)
+        local sliderFrame = Instance.new("Frame")
+        sliderFrame.Size = UDim2.new(1, -10, 0, 40)
+        sliderFrame.Position = UDim2.new(0, 5, 0, 95)
+        sliderFrame.BackgroundTransparency = 1
+        sliderFrame.Parent = sectionFrame
 
-    Section.Parent = self.Sections[side] or self.Sections.Left
-    return setmetatable({ Frame = Section }, Library)
-end
+        local label = Instance.new("TextLabel")
+        label.Text = name .. ": " .. tostring(default)
+        label.Size = UDim2.new(1, 0, 0, 20)
+        label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.Parent = sliderFrame
 
--- Adicionar botão
-function Library:AddButton(text, callback)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(1, 0, 0, 28)
-    Btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Btn.Text = text
-    Btn.Parent = self.Frame
-    Btn.MouseButton1Click:Connect(callback)
-end
+        local bar = Instance.new("Frame")
+        bar.Size = UDim2.new(1, -20, 0, 6)
+        bar.Position = UDim2.new(0, 10, 0, 25)
+        bar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        bar.Parent = sliderFrame
 
--- Adicionar checkbox
-function Library:AddCheckbox(text, default, callback)
-    local Frame = Instance.new("Frame")
-    Frame.Size = UDim2.new(1, 0, 0, 28)
-    Frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    Frame.Parent = self.Frame
+        local fill = Instance.new("Frame")
+        fill.Size = UDim2.new((default-min)/(max-min), 0, 1, 0)
+        fill.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+        fill.Parent = bar
 
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1, -28, 1, 0)
-    Label.Position = UDim2.new(0, 28, 0, 0)
-    Label.BackgroundTransparency = 1
-    Label.Text = text
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.Parent = Frame
+        local currentValue = default
 
-    local Box = Instance.new("TextButton")
-    Box.Size = UDim2.new(0, 24, 0, 24)
-    Box.BackgroundColor3 = default and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
-    Box.Text = ""
-    Box.Parent = Frame
-
-    local state = default
-    Box.MouseButton1Click:Connect(function()
-        state = not state
-        Box.BackgroundColor3 = state and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
-        if callback then callback(state) end
-    end)
-end
-
--- Adicionar slider
-function Library:AddSlider(text, min, max, default, callback)
-    local Frame = Instance.new("Frame")
-    Frame.Size = UDim2.new(1, 0, 0, 36)
-    Frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    Frame.Parent = self.Frame
-
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1, 0, 0, 14)
-    Label.BackgroundTransparency = 1
-    Label.Text = text .. ": " .. default
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.Font = Enum.Font.SourceSans
-    Label.TextSize = 14
-    Label.Parent = Frame
-
-    local SliderBar = Instance.new("Frame")
-    SliderBar.Size = UDim2.new(1, -10, 0, 6)
-    SliderBar.Position = UDim2.new(0, 5, 0, 20)
-    SliderBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    SliderBar.Parent = Frame
-
-    local Fill = Instance.new("Frame")
-    Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    Fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-    Fill.Parent = SliderBar
-
-    local dragging = false
-    SliderBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
+        local function setValue(v)
+            v = math.clamp(v, min, max)
+            v = math.floor(v/step+0.5)*step
+            currentValue = v
+            fill.Size = UDim2.new((v-min)/(max-min), 0, 1, 0)
+            label.Text = name .. ": " .. tostring(v)
+            if callback then callback(v) end
         end
-    end)
-    SliderBar.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local pct = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-            local value = math.floor(min + (max - min) * pct)
-            Fill.Size = UDim2.new(pct, 0, 1, 0)
-            Label.Text = text .. ": " .. value
-            if callback then callback(value) end
-        end
-    end)
+
+        bar.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                local mouse = UserInputService:GetMouseLocation().X
+                local rel = (mouse - bar.AbsolutePosition.X)/bar.AbsoluteSize.X
+                setValue(min + (max-min)*rel)
+            end
+        end)
+    end
+
+    return section
 end
 
 return Library
